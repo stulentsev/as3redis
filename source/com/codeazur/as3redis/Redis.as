@@ -2,7 +2,7 @@
 {
 	import com.codeazur.as3redis.commands.*;
 	import com.codeazur.as3redis.events.RedisMonitorDataEvent;
-	
+
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -23,12 +23,12 @@
 		protected var connecting:Boolean = false;
 		protected var connectResultHandler:Function;
 		protected var enterFrameProvider:Sprite;
-		
+
 		protected var _host:String;
 		protected var _port:int;
 		protected var _password:String;
 		protected var _immediateSend:Boolean = true;
-		
+
 		public function Redis(host:String = "127.0.0.1", port:int = 6379)
 		{
 			_host = host;
@@ -45,73 +45,73 @@
 			socket.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
 			socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
 		}
-		
+
 		public function get password():String { return _password; }
 		public function set password(value:String):void { _password = value; }
 
 		public function get immediateSend():Boolean { return _immediateSend; }
 		public function set immediateSend(value:Boolean):void { _immediateSend = value; }
-		
+
 		public function get connected():Boolean { return socket.connected; }
-		
-		public function connect(host:String = "127.0.0.1", port:int = 6379):void {
-			connectInternal(host, port);
+
+		public function connect(host:String = null, port:int = 0):void {
+			connectInternal(host || _host, port != 0 ? port : _port);
 		}
-		
+
 		public function flush():void {
 			executeIdleCommands();
 		}
-		
+
 
 		// Connection handling
-		
+
 		public function sendQUIT():RedisCommand {
 			return addCommand(new QUIT());
 		}
-		
+
 		public function sendAUTH(password:String):RedisCommand {
 			return addCommand(new AUTH(password));
 		}
-		
-		
+
+
 		// Commands operating on string values
-		
+
 		public function sendSET(key:String, value:*):RedisCommand {
 			return addCommand(new SET(key, value));
 		}
-		
+
 		public function sendGET(key:String):RedisCommand {
 			return addCommand(new GET(key));
 		}
-		
+
 		public function sendGETSET(key:String, value:*):RedisCommand {
 			return addCommand(new GETSET(key, value));
 		}
-		
+
 		public function sendMGET(keys:Array):RedisCommand {
 			return addCommand(new MGET(keys));
 		}
-		
+
 		public function sendSETNX(key:String, value:*):RedisCommand {
 			return addCommand(new SETNX(key, value));
 		}
-		
+
 		public function sendINCR(key:String):RedisCommand {
 			return addCommand(new INCR(key));
 		}
-		
+
 		public function sendINCRBY(key:String, value:uint):RedisCommand {
 			return addCommand(new INCRBY(key, value));
 		}
-		
+
 		public function sendDECR(key:String):RedisCommand {
 			return addCommand(new DECR(key));
 		}
-		
+
 		public function sendDECRBY(key:String, value:uint):RedisCommand {
 			return addCommand(new DECRBY(key, value));
 		}
-		
+
 		public function sendEXISTS(key:String):RedisCommand {
 			return addCommand(new EXISTS(key));
 		}
@@ -119,14 +119,14 @@
 		public function sendDEL(keys:Array):RedisCommand {
 			return addCommand(new DEL(keys));
 		}
-		
+
 		public function sendTYPE(key:String):RedisCommand {
 			return addCommand(new TYPE(key));
 		}
 
-		
+
 		// Commands operating on the key space
-		
+
 		public function sendKEYS(pattern:String):RedisCommand {
 			return addCommand(new KEYS(pattern));
 		}
@@ -134,7 +134,7 @@
 		public function sendRANDOMKEY():RedisCommand {
 			return addCommand(new RANDOMKEY());
 		}
-		
+
 		public function sendRENAME(oldKey:String, newKey:String):RedisCommand {
 			return addCommand(new RENAME(oldKey, newKey));
 		}
@@ -154,20 +154,20 @@
 		public function sendTTL(key:String):RedisCommand {
 			return addCommand(new TTL(key));
 		}
-		
+
 		// Version 1.1
 		public function sendMSET(keys:Array, values:Array):RedisCommand {
 			return addCommand(new MSET(keys, values));
 		}
-		
+
 		// Version 1.1
 		public function sendMSETNX(keys:Array, values:Array):RedisCommand {
 			return addCommand(new MSETNX(keys, values));
 		}
 
-		
+
 		// Commands operating on lists
-		
+
 		public function sendRPUSH(key:String, value:*):RedisCommand {
 			return addCommand(new RPUSH(key, value));
 		}
@@ -199,7 +199,7 @@
 		public function sendLREM(key:String, count:int, value:*):RedisCommand {
 			return addCommand(new LREM(key, count, value));
 		}
-		
+
 		public function sendLPOP(key:String):RedisCommand {
 			return addCommand(new LPOP(key));
 		}
@@ -207,7 +207,7 @@
 		public function sendRPOP(key:String):RedisCommand {
 			return addCommand(new RPOP(key));
 		}
-		
+
 		// Version 1.1
 		public function sendRPOPLPUSH(sourceKey:String, destinationKey:String):RedisCommand {
 			return addCommand(new RPOPLPUSH(sourceKey, destinationKey));
@@ -215,7 +215,7 @@
 
 
 		// Commands operating on sets
-		
+
 		public function sendSADD(key:String, value:*):RedisCommand {
 			return addCommand(new SADD(key, value));
 		}
@@ -272,8 +272,8 @@
 		public function sendSRANDMEMBER(key:String):RedisCommand {
 			return addCommand(new SRANDMEMBER(key));
 		}
-		
-		
+
+
 		// Version 1.1
 		// Commands operating on sorted sets (zsets)
 
@@ -284,105 +284,105 @@
 		public function sendZREM(key:String, value:*):RedisCommand {
 			return addCommand(new ZREM(key, value));
 		}
-		
+
 		public function sendZRANGE(key:String, startIndex:int, endIndex:int):RedisCommand {
 			return addCommand(new ZRANGE(key, startIndex, endIndex));
 		}
-		
+
 		public function sendZREVRANGE(key:String, startIndex:int, endIndex:int):RedisCommand {
 			return addCommand(new ZREVRANGE(key, startIndex, endIndex));
 		}
-		
+
 		public function sendZRANGEBYSCORE(key:String, minScore:Number, maxScore:Number):RedisCommand {
 			return addCommand(new ZRANGEBYSCORE(key, minScore, maxScore));
 		}
-		
+
 		public function sendZCARD(key:String):RedisCommand {
 			return addCommand(new ZCARD(key));
 		}
-		
+
 		public function sendZSCORE(key:String, value:*):RedisCommand {
 			return addCommand(new ZSCORE(key, value));
 		}
-		
-		
+
+
 		// Multiple databases handling commands
-		
+
 		public function sendSELECT(dbIndex:uint):RedisCommand {
 			return addCommand(new SELECT(dbIndex));
 		}
-		
+
 		public function sendMOVE(key:String, dbIndex:uint):RedisCommand {
 			return addCommand(new MOVE(key, dbIndex));
 		}
-		
+
 		public function sendFLUSHDB():RedisCommand {
 			return addCommand(new FLUSHDB());
 		}
-		
+
 		public function sendFLUSHALL():RedisCommand {
 			return addCommand(new FLUSHALL());
 		}
 
-		
+
 		// Sorting
-		
+
 		public function sendSORT(key:String, limitMin:int = -1, limitMax:int = -1, desc:Boolean = false, alpha:Boolean = false, byPattern:String = null, getPatterns:Array = null):RedisCommand {
 			return addCommand(new SORT(key, limitMin, limitMax, desc, alpha, byPattern, getPatterns));
 		}
 
-		
+
 		// Persistence control commands
-		
+
 		public function sendSAVE():RedisCommand {
 			return addCommand(new SAVE());
 		}
-		
+
 		public function sendBGSAVE():RedisCommand {
 			return addCommand(new BGSAVE());
 		}
-		
+
 		public function sendLASTSAVE():RedisCommand {
 			return addCommand(new LASTSAVE());
 		}
-		
+
 		public function sendSHUTDOWN():RedisCommand {
 			return addCommand(new SHUTDOWN());
 		}
 
-		
+
 		// Remote server control commands
-		
+
 		public function sendINFO():RedisCommand {
 			return addCommand(new INFO());
 		}
-		
+
 		public function sendMONITOR():RedisCommand {
 			return addCommand(new MONITOR());
 		}
-		
+
 		public function sendSLAVEOF(host:String = null, port:int = -1):RedisCommand {
 			return addCommand(new SLAVEOF(host, port));
 		}
-		
-		
+
+
 		// Misc commands (undocumented)
-		
+
 		public function sendPING():RedisCommand {
 			return addCommand(new PING());
 		}
-		
+
 		public function sendECHO(text:String):RedisCommand {
 			return addCommand(new ECHO(text));
 		}
-		
-		
+
+
 		protected function addCommand(command:RedisCommand):RedisCommand {
 			idleQueue.push(command);
 			executeIdleCommands();
 			return command;
 		}
-		
+
 		protected function executeIdleCommands():void {
 			if (!active) {
 				if (!connected) {
@@ -395,7 +395,7 @@
 				}
 			}
 		}
-		
+
 		protected function executeIdleCommandsRunner(event:Event):void {
 			var startTime:Number = getTimer();
 			var command:RedisCommand;
@@ -414,7 +414,7 @@
 				active = false;
 			}
 		}
-		
+
 		protected function connectInternal(host:String, port:int, resultHandler:Function = null):void {
 			_host = host;
 			_port = port;
@@ -436,12 +436,12 @@
 				connectResultHandler();
 			}
 		}
-		
+
 		protected function errorHandler(e:Event):void {
 			// Redispatch the event
 			dispatchEvent(e.clone());
 		}
-		
+
 		protected function dataHandler(e:ProgressEvent):void {
 			// Read all available bytes from the socket and append them to the buffer
 			socket.readBytes(buffer, buffer.length, socket.bytesAvailable);
@@ -594,7 +594,7 @@
 				buffer.length = 0;
 			}
 		}
-		
+
 		protected function parseBulk(len:int):ByteArray {
 			// Process the bulk data body
 			var ba:ByteArray = new ByteArray();
@@ -615,7 +615,7 @@
 			}
 			return ba;
 		}
-		
+
 		protected function findCRLF(ba:ByteArray, startAtIndex:uint = 0):int {
 			for (var i:uint = startAtIndex; i < ba.length - 1; i++) {
 				if (ba[i] == 0x0d && ba[i + 1] == 0x0a) {
