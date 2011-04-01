@@ -1,0 +1,71 @@
+keys
+    expireat
+    persist
+
+strings:
+    append
+    getbit
+    getrange
+    setbit
+    setex
+    setrange
+    strlen
+
+hashes
+    hdel
+    hexists
+    hget
+    hgetall
+    hincrby
+    hkeys
+    hlen
+    hmget
+    hmset
+    hset
+    hsetnx
+    hvals
+
+lists
+    blpop
+    brpop
+    brpoplpush
+    linsert
+    lpushhx
+    rpushhx
+
+sorted sets
+    zcount
+    zincrby
+    zinterstore
+    zrank
+    zremrangebyrank
+    zremrangebyscore
+    zrevrangebyscore
+    zrevrank
+    zunionstore
+
+pub/sub
+    psubscribe
+    publish
+    punsubscribe
+    subscribe
+    unsubscribe
+
+transactions
+    discard
+    exec
+    multi
+    unwatch
+    watch
+
+server
+    bgrewriteaof
+    config get
+    config set
+    config resetstat
+    debug object
+    debug segfault
+    sync (internal)
+
+
+
