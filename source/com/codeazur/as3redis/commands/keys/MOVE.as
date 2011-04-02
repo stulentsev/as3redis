@@ -1,6 +1,7 @@
 package com.codeazur.as3redis.commands.keys {
 import com.codeazur.as3redis.RedisCommand;
 
+import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class MOVE extends RedisCommand {
@@ -16,9 +17,12 @@ public class MOVE extends RedisCommand {
         return "MOVE";
     }
 
-    override public function send(stream:IDataOutput):void {
-        stream.writeUTFBytes(name + " " + _key + " " + _dbIndex + "\r\n");
-        super.send(stream);
+    public function get result() : int {
+        return parseInt(_responseMessage);
+    }
+
+    override protected function getUnifiedCommand() : ByteArray {
+        return serializeToUnified(name, _key,  _dbIndex);
     }
 
     override public function toStringCommand():String {

@@ -11,20 +11,15 @@ public class KeyCommand extends RedisCommand {
         _key = key;
     }
 
-    public function get key() : String {
+    public function get key():String {
         return _key;
     }
-
-//    override public function send(stream:IDataOutput):void {
-//        stream.writeUTFBytes(name + " " + _key + "\r\n");
-//        super.send(stream);
-//    }
 
     override public function toStringCommand():String {
         return "[" + name + " " + _key + "]";
     }
 
-    override protected function getUnifiedCommand() : ByteArray {
+    override protected function getUnifiedCommand():ByteArray {
         return serializeToUnified(name, _key);
     }
 }

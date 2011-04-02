@@ -1,24 +1,22 @@
 ﻿package com.codeazur.as3redis.commands.strings {
 import com.codeazur.as3redis.RedisCommand;
 
+import com.codeazur.as3redis.commands.base.KeyValueCommand;
+
 import flash.utils.IDataOutput;
 
-public class DECRBY extends RedisCommand {
-    protected var _key:String;
-    protected var _value:uint;
+public class DECRBY extends KeyValueCommand {
 
     public function DECRBY(key:String, value:uint) {
-        _key = key;
-        _value = value;
+        super(key, value);
     }
 
     override public function get name():String {
         return "DECRBY";
     }
 
-    override public function send(stream:IDataOutput):void {
-        stream.writeUTFBytes(name + " " + _key + " " + _value + "\r\n");
-        super.send(stream);
+    public function get result() : int {
+        return parseInt(_responseMessage);
     }
 
     override public function toStringCommand():String {

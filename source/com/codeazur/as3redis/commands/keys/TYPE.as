@@ -9,5 +9,9 @@ public class TYPE extends KeyCommand {
     override public function get name():String {
         return "TYPE";
     }
+
+    public function get result() : String {
+        return _responseMessage;
+    }
 }
 }

@@ -1,6 +1,7 @@
 package com.codeazur.as3redis.commands.keys {
 import com.codeazur.as3redis.RedisCommand;
 
+import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class SORT extends RedisCommand {
@@ -11,8 +12,18 @@ public class SORT extends RedisCommand {
     protected var _alpha:Boolean;
     protected var _byPattern:String;
     protected var _getPatterns:Array;
+    protected var _storeToKey:String;
 
-    public function SORT(key:String, limitMin:int = -1, limitMax:int = -1, desc:Boolean = false, alpha:Boolean = false, byPattern:String = null, getPatterns:Array = null) {
+    private var _resultElements:Array;
+
+    public function SORT(key:String,
+                         limitMin:int = -1,
+                         limitMax:int = -1,
+                         desc:Boolean = false,
+                         alpha:Boolean = false,
+                         byPattern:String = null,
+                         getPatterns:Array = null,
+                         store:String = null) {
         _key = key;
         _limitMin = limitMin;
         _limitMax = limitMax;
@@ -20,39 +31,68 @@ public class SORT extends RedisCommand {
         _alpha = alpha;
         _byPattern = byPattern;
         _getPatterns = getPatterns;
+        _storeToKey = store;
     }
 
     override public function get name():String {
         return "SORT";
     }
 
-    override public function send(stream:IDataOutput):void {
-        stream.writeUTFBytes(name + " " + _key);
+    override protected function getUnifiedCommand():ByteArray {
+        var args:Array = [name, _key];
         if (_limitMin >= 0 && _limitMax >= 0) {
-            stream.writeUTFBytes(" LIMIT " + _limitMin + " " + _limitMax);
+            args.push('LIMIT');
+            args.push(_limitMin);
+            args.push(_limitMax);
         } else if (!(_limitMin < 0 && _limitMax < 0)) {
             _limitMin = Math.max(0, _limitMin);
             _limitMax = Math.max(0, _limitMax);
             if (_limitMin < _limitMax) {
-                stream.writeUTFBytes(" LIMIT " + _limitMin + " " + _limitMax);
+                args.push('LIMIT');
+                args.push(_limitMin);
+                args.push(_limitMax);
             } else if (_limitMin > _limitMax) {
-                stream.writeUTFBytes(" LIMIT " + _limitMax + " " + _limitMin);
+                args.push('LIMIT');
+                args.push(_limitMax);
+                args.push(_limitMin);
             }
         }
         if (_desc) {
-            stream.writeUTFBytes(" DESC");
+            args.push("DESC");
         }
         if (_alpha) {
-            stream.writeUTFBytes(" ALPHA");
+            args.push("ALPHA");
         }
         if (_byPattern != null) {
-            stream.writeUTFBytes(" BY " + _byPattern);
+            args.push("BY");
+            args.push(_byPattern);
         }
+
         if (_getPatterns != null && _getPatterns.length > 0) {
-            stream.writeUTFBytes(" GET " + _getPatterns.join(" GET "));
+            for each (var gp:String in _getPatterns) {
+                args.push("GET");
+                args.push(gp);
+            }
         }
-        stream.writeUTFBytes("\r\n");
-        super.send(stream);
+
+        if(_storeToKey != null) {
+            args.push("STORE");
+            args.push(_storeToKey);
+        }
+
+        return serializeToUnified.apply(this, args);
+    }
+
+    override protected function processBulkResponse(response:ByteArray):void {
+        if (response && response.length > 0) {
+            var p:String = response.readUTFBytes(response.length);
+            _resultElements.push(p);
+        }
+    }
+
+
+    public function get result():Array {
+        return _resultElements;
     }
 
     override public function toStringCommand():String {

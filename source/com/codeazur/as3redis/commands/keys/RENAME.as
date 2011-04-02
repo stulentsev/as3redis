@@ -1,6 +1,7 @@
 ﻿package com.codeazur.as3redis.commands.keys {
 import com.codeazur.as3redis.RedisCommand;
 
+import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class RENAME extends RedisCommand {
@@ -16,9 +17,12 @@ public class RENAME extends RedisCommand {
         return "RENAME";
     }
 
-    override public function send(stream:IDataOutput):void {
-        stream.writeUTFBytes(name + " " + _oldKey + " " + _newKey + "\r\n");
-        super.send(stream);
+    public function get result() : String {
+        return _responseMessage;
+    }
+
+    override protected function getUnifiedCommand() : ByteArray {
+        return serializeToUnified(name, _oldKey, _newKey);
     }
 
     override public function toStringCommand():String {

@@ -13,7 +13,7 @@ public class KEYS extends RedisCommand {
         _keys = [];
     }
 
-    public function get keys():Array {
+    public function get result():Array {
         return _keys;
     }
 
@@ -21,18 +21,19 @@ public class KEYS extends RedisCommand {
         return "KEYS";
     }
 
-    override public function send(stream:IDataOutput):void {
-        stream.writeUTFBytes(name + " " + _pattern + "\r\n");
-        super.send(stream);
+
+    override protected function getUnifiedCommand() : ByteArray {
+        return serializeToUnified(name, _pattern);
     }
 
     override protected function processBulkResponse(response:ByteArray):void {
         if (response && response.length > 0) {
             var p:String = response.readUTFBytes(response.length);
-            var pa:Array = p.split(" ");
-            for (var i:uint = 0; i < pa.length; i++) {
-                _keys.push(pa[i]);
-            }
+//            var pa:Array = p.split(" ");
+//            for (var i:uint = 0; i < pa.length; i++) {
+//                _keys.push(pa[i]);
+//            }
+            _keys.push(p);
         }
     }
 

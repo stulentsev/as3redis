@@ -11,11 +11,11 @@ import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class HMSET extends KeyCommand {
-    private var _fields : Array;
+    private var _keysAndValues : Array;
 
-    public function HMSET(key : String, fields : Array) {
+    public function HMSET(key : String, keysAndValues : Array) {
         super(key);
-        _fields = fields;
+        _keysAndValues = keysAndValues;
     }
 
     override public function get name():String {
@@ -28,7 +28,11 @@ public class HMSET extends KeyCommand {
 
     override protected function getUnifiedCommand() : ByteArray {
         var args : Array = [name, _key];
-        for each(var f : String in _fields) {
+
+        if(_keysAndValues.length % 2 != 0) {
+            throw new Error("There must be even number of arguments to HMSET")
+        }
+        for each(var f : String in _keysAndValues) {
             args.push(f);
         }
 

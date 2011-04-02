@@ -104,7 +104,7 @@ public class Redis extends EventDispatcher {
         return addCommand(new GETSET(key, value));
     }
 
-    public function sendMGET(keys:Array):RedisCommand {
+    public function sendMGET(... keys):RedisCommand {
         return addCommand(new MGET(keys));
     }
 
@@ -222,13 +222,13 @@ public class Redis extends EventDispatcher {
     }
 
     // Version 1.1
-    public function sendMSET(keys:Array, values:Array):RedisCommand {
-        return addCommand(new MSET(keys, values));
+    public function sendMSET(... keysAndValues):RedisCommand {
+        return addCommand(new MSET(keysAndValues));
     }
 
     // Version 1.1
-    public function sendMSETNX(keys:Array, values:Array):RedisCommand {
-        return addCommand(new MSETNX(keys, values));
+    public function sendMSETNX(... keysAndValues):RedisCommand {
+        return addCommand(new MSETNX(keysAndValues));
     }
 
 

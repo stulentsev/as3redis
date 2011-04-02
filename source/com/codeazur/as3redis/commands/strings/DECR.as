@@ -9,5 +9,9 @@ public class DECR extends KeyCommand {
     override public function get name():String {
         return "DECR";
     }
+
+    public function get result() : int {
+        return parseInt(_responseMessage);
+    }
 }
 }

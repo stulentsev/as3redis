@@ -1,6 +1,7 @@
 ﻿package com.codeazur.as3redis.commands.strings {
 import com.codeazur.as3redis.RedisCommand;
 
+import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class MGET extends RedisCommand {
@@ -14,14 +15,18 @@ public class MGET extends RedisCommand {
         return "MGET";
     }
 
-    override public function send(stream:IDataOutput):void {
-        var cmd:String = name;
-        for (var i:uint = 0; i < _keys.length; i++) {
-            cmd += " " + _keys[i];
+
+    public function get result() : Array {
+        return responseBulkAsStrings;
+    }
+
+    override protected function getUnifiedCommand() : ByteArray {
+        var args : Array = [name];
+        for each(var f : String in _keys) {
+            args.push(f);
         }
-        cmd += "\r\n";
-        stream.writeUTFBytes(cmd);
-        super.send(stream);
+
+        return serializeToUnified.apply(this, args);
     }
 
     override public function toStringCommand():String {

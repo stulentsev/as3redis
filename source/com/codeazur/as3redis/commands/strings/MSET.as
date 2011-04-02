@@ -5,45 +5,36 @@ import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class MSET extends RedisCommand {
-    protected var _keys:Array;
-    protected var _values:Array;
+    protected var _keysAndValues:Array;
 
-    public function MSET(keys:Array, values:Array) {
-        _keys = (keys != null) ? keys : [];
-        _values = (values != null) ? values : [];
+    public function MSET(keysAndValues : Array) {
+        _keysAndValues = keysAndValues || [];
     }
 
     override public function get name():String {
         return "MSET";
     }
 
-    override public function send(stream:IDataOutput):void {
-        var kvlen:uint = Math.min(_keys.length, _values.length);
-        // write number of bulks for this command
-        stream.writeUTFBytes("*" + (kvlen * 2 + 1) + "\r\n");
-        // write command name as bulk
-        stream.writeUTFBytes("$" + (name.length) + "\r\n" + name + "\r\n");
-        // write key value pairs as bulks
-        var key:ByteArray;
-        var value:ByteArray;
-        for (var i:uint = 0; i < kvlen; i++) {
-            key = serializeValue(_keys[i]);
-            value = serializeValue(_values[i]);
-            stream.writeUTFBytes("$" + (key.length) + "\r\n");
-            stream.writeBytes(key);
-            stream.writeUTFBytes("\r\n$" + (value.length) + "\r\n");
-            stream.writeBytes(value);
-            stream.writeUTFBytes("\r\n");
+    public function get result() : String {
+        return _responseMessage;
+    }
+
+    override protected function getUnifiedCommand() : ByteArray {
+        var args : Array = [name];
+        if(_keysAndValues.length % 2 != 0) {
+            throw new Error("There must be even number of arguments to MSET")
         }
-        super.send(stream);
+
+        for each(var f : String in _keysAndValues) {
+            args.push(f);
+        }
+
+        return serializeToUnified.apply(this, args);
     }
 
     override public function toStringCommand():String {
         var s:String = "[" + name;
-        var kvlen:uint = Math.min(_keys.length, _values.length);
-        for (var i:uint = 0; i < kvlen; i++) {
-            s += " " + toStringValue(_keys[i]) + " " + toStringValue(_values[i]);
-        }
+        s += " " + _keysAndValues.join(' ') + ' ';
         return s + "]";
     }
 }

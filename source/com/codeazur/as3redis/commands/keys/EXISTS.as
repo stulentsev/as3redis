@@ -1,4 +1,5 @@
 ﻿package com.codeazur.as3redis.commands.keys {
+
 import com.codeazur.as3redis.commands.base.KeyCommand;
 
 public class EXISTS extends KeyCommand {
@@ -9,5 +10,10 @@ public class EXISTS extends KeyCommand {
     override public function get name():String {
         return "EXISTS";
     }
+
+    public function get result() : int {
+        return parseInt(_responseMessage);
+    }
+
 }
 }

@@ -1,5 +1,7 @@
 ﻿package com.codeazur.as3redis.commands.strings {
-public class SETNX extends SET {
+import com.codeazur.as3redis.commands.base.KeyValueCommand;
+
+public class SETNX extends KeyValueCommand {
     public function SETNX(key:String, value:*) {
         super(key, value);
     }
@@ -7,5 +9,10 @@ public class SETNX extends SET {
     override public function get name():String {
         return "SETNX";
     }
+
+    public function get result() : int {
+        return parseInt(_responseMessage);
+    }
+
 }
 }
