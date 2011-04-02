@@ -11,7 +11,7 @@ public class SMOVE extends RedisCommand {
 
     public function SMOVE(sourceKey:String, destinationKey:String, value:*) {
         _sourceKey = sourceKey;
-        _destinationKey = destinationKey
+        _destinationKey = destinationKey;
         _value = value;
     }
 
@@ -19,12 +19,12 @@ public class SMOVE extends RedisCommand {
         return "SMOVE";
     }
 
-    override public function send(stream:IDataOutput):void {
-        var baValue:ByteArray = serializeValue(_value);
-        stream.writeUTFBytes(name + " " + _sourceKey + " " + _destinationKey + " " + baValue.length + "\r\n");
-        stream.writeBytes(baValue);
-        stream.writeUTFBytes("\r\n");
-        super.send(stream);
+    override protected function getUnifiedCommand() :ByteArray {
+        return serializeToUnified(name, _sourceKey, _destinationKey, _value);
+    }
+
+    public function get result() : int {
+        return parseInt(_responseMessage);
     }
 
     override public function toStringCommand():String {

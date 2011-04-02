@@ -1,6 +1,7 @@
 ﻿package com.codeazur.as3redis.commands.sets {
 import com.codeazur.as3redis.RedisCommand;
 
+import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class SDIFF extends RedisCommand {
@@ -14,9 +15,16 @@ public class SDIFF extends RedisCommand {
         return "SDIFF";
     }
 
-    override public function send(stream:IDataOutput):void {
-        stream.writeUTFBytes(name + " " + _keys.join(" ") + "\r\n");
-        super.send(stream);
+    override protected function getUnifiedCommand() : ByteArray {
+        var args : Array = [name];
+        for each(var k : String in _keys) {
+            args.push(k);
+        }
+        return serializeToUnified.apply(this, args);
+    }
+
+    public function get result() : Array {
+        return responseBulkAsStrings;
     }
 
     override public function toStringCommand():String {

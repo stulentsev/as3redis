@@ -9,5 +9,10 @@ public class SPOP extends KeyCommand {
     override public function get name():String {
         return "SPOP";
     }
+
+    public function get result() : String {
+        return firstResponseBulkAsString;
+    }
+
 }
 }

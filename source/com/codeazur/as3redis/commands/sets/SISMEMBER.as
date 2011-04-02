@@ -9,5 +9,9 @@ public class SISMEMBER extends KeyValueCommand {
     override public function get name():String {
         return "SISMEMBER";
     }
+
+    public function get result() : int {
+        return parseInt(_responseMessage);
+    }
 }
 }

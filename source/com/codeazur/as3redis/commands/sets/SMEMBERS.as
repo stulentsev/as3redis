@@ -9,5 +9,9 @@ public class SMEMBERS extends KeyCommand {
     override public function get name():String {
         return "SMEMBERS";
     }
+
+    public function get result() : Array {
+        return responseBulkAsStrings;
+    }
 }
 }
