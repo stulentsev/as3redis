@@ -1,6 +1,7 @@
 package com.codeazur.as3redis.commands.connection {
 import com.codeazur.as3redis.RedisCommand;
 
+import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class SELECT extends RedisCommand {
@@ -14,13 +15,16 @@ public class SELECT extends RedisCommand {
         return "SELECT";
     }
 
-    override public function send(stream:IDataOutput):void {
-        stream.writeUTFBytes(name + " " + _dbIndex + "\r\n");
-        super.send(stream);
+    override protected function getUnifiedCommand() : ByteArray {
+        return serializeToUnified(name, _dbIndex);
     }
 
     override public function toStringCommand():String {
         return "[" + name + " " + _dbIndex + "]";
+    }
+
+    public function get result() : String {
+        return _responseMessage;
     }
 }
 }

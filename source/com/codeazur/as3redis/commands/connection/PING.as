@@ -8,5 +8,9 @@ public class PING extends SimpleCommand {
     override public function get name():String {
         return "PING";
     }
+
+    public function get result() : String {
+        return _responseMessage;
+    }
 }
 }

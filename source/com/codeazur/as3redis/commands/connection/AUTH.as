@@ -1,6 +1,7 @@
 ﻿package com.codeazur.as3redis.commands.connection {
 import com.codeazur.as3redis.RedisCommand;
 
+import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class AUTH extends RedisCommand {
@@ -14,9 +15,12 @@ public class AUTH extends RedisCommand {
         return "AUTH";
     }
 
-    override public function send(stream:IDataOutput):void {
-        stream.writeUTFBytes(name + " " + _password + "\r\n");
-        super.send(stream);
+    public function get result() : String {
+        return _responseMessage;
+    }
+
+    override protected function getUnifiedCommand() : ByteArray {
+        return serializeToUnified(name, _password);
     }
 
     override public function toStringCommand():String {

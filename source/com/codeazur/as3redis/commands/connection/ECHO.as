@@ -6,6 +6,7 @@ import flash.utils.IDataOutput;
 
 public class ECHO extends RedisCommand {
     protected var _text:String;
+    protected var _response:String;
 
     public function ECHO(text:String) {
         _text = text;
@@ -15,15 +16,23 @@ public class ECHO extends RedisCommand {
         return "ECHO";
     }
 
-    override public function send(stream:IDataOutput):void {
-        var baText:ByteArray = new ByteArray();
-        baText.writeUTFBytes(_text);
-        stream.writeUTFBytes(name + " " + baText.length + "\r\n" + _text + "\r\n");
-        super.send(stream);
+    public function get result() : String {
+        return _response;
+    }
+
+    override protected function getUnifiedCommand() : ByteArray {
+        return serializeToUnified(name, _text);
     }
 
     override public function toStringCommand():String {
         return "[" + name + " " + _text + "]";
+    }
+
+    override protected function processBulkResponse(response:ByteArray):void {
+        if (response && response.length > 0) {
+            var p:String = response.readUTFBytes(response.length);
+            _response = p;
+        }
     }
 }
 }
