@@ -9,11 +9,5 @@ public class SADD extends KeyValueCommand {
     override public function get name():String {
         return "SADD";
     }
-
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
-
-
 }
 }

@@ -9,9 +9,5 @@ public class TTL extends KeyCommand {
     override public function get name():String {
         return "TTL";
     }
-
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
 }
 }

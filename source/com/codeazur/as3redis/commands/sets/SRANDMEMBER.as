@@ -9,10 +9,5 @@ public class SRANDMEMBER extends KeyCommand {
     override public function get name():String {
         return "SRANDMEMBER";
     }
-
-    public function get result() : String {
-        return firstResponseBulkAsString;
-    }
-
 }
 }

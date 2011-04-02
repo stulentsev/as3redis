@@ -19,12 +19,8 @@ public class ZADD extends RedisCommand {
         return "ZADD";
     }
 
-    override public function send(stream:IDataOutput):void {
-        var baValue:ByteArray = serializeValue(_value);
-        stream.writeUTFBytes(name + " " + _key + " " + _score + " " + baValue.length + "\r\n");
-        stream.writeBytes(baValue);
-        stream.writeUTFBytes("\r\n");
-        super.send(stream);
+    override protected function getUnifiedCommand() : ByteArray {
+        return serializeToUnified(name, _key,  _score, _value);
     }
 
     override public function toStringCommand():String {

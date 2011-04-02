@@ -22,10 +22,6 @@ public class HMSET extends KeyCommand {
         return "HMSET";
     }
 
-    public function get result() : String {
-        return _responseMessage;
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         var args : Array = [name, _key];
 

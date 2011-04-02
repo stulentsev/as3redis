@@ -9,9 +9,5 @@ public class LLEN extends KeyCommand {
     override public function get name():String {
         return "LLEN";
     }
-
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
 }
 }

@@ -13,10 +13,6 @@ public class KEYS extends RedisCommand {
         _keys = [];
     }
 
-    public function get result():Array {
-        return _keys;
-    }
-
     override public function get name():String {
         return "KEYS";
     }

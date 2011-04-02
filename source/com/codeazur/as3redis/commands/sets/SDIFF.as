@@ -23,10 +23,6 @@ public class SDIFF extends RedisCommand {
         return serializeToUnified.apply(this, args);
     }
 
-    public function get result() : Array {
-        return responseBulkAsStrings;
-    }
-
     override public function toStringCommand():String {
         return "[" + name + " " + _keys.join(" ") + "]";
     }

@@ -14,11 +14,6 @@ public class DECRBY extends KeyValueCommand {
     override public function get name():String {
         return "DECRBY";
     }
-
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
-
     override public function toStringCommand():String {
         return "[" + name + " " + _key + " " + _value + "]";
     }

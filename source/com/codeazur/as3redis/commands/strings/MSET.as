@@ -15,10 +15,6 @@ public class MSET extends RedisCommand {
         return "MSET";
     }
 
-    public function get result() : String {
-        return _responseMessage;
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         var args : Array = [name];
         if(_keysAndValues.length % 2 != 0) {

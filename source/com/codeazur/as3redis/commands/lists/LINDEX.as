@@ -14,9 +14,5 @@ public class LINDEX extends KeyValueCommand {
     override public function get name():String {
         return "LINDEX";
     }
-
-    public function get result() : String {
-        return firstResponseBulkAsString;
-    }
 }
 }

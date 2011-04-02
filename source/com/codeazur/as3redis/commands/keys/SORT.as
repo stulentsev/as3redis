@@ -90,11 +90,6 @@ public class SORT extends RedisCommand {
         }
     }
 
-
-    public function get result():Array {
-        return _resultElements;
-    }
-
     override public function toStringCommand():String {
         var s:String = name + " " + _key;
         if (_limitMin >= 0 && _limitMax >= 0) {

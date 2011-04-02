@@ -17,14 +17,5 @@ public class HLEN extends KeyCommand {
     override public function get name() : String {
         return 'HLEN';
     }
-
-    public function get result() : int {
-        if(_responseType == RESPONSE_TYPE_INTEGER) {
-            return parseInt(_responseMessage)
-        } else {
-            throw new Error('response type for HLEN must be integer');
-        }
-    }
-
 }
 }

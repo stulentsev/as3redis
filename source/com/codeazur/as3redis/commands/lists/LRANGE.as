@@ -19,10 +19,6 @@ public class LRANGE extends RedisCommand {
         return "LRANGE";
     }
 
-    public function get result() : Array {
-        return responseBulkAsStrings;
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         return serializeToUnified(name, _key,  _startIndex, _endIndex);
     }

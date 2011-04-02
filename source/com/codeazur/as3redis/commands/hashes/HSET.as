@@ -26,14 +26,6 @@ public class HSET extends KeyFieldCommand {
         return _value;
     }
 
-    public function get result() : int {
-        if(_responseType == RESPONSE_TYPE_INTEGER) {
-            return parseInt(_responseMessage)
-        } else {
-            throw new Error('response type for ' + name + ' must be integer');
-        }
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         return serializeToUnified(name, _key, _field, _value);
     }

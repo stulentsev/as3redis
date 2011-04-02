@@ -12,7 +12,6 @@ import flash.utils.IDataOutput;
 
 public class HMGET extends KeyCommand {
     private var _fields : Array;
-    private var _values : Array = [];
 
     public function HMGET(key : String, fields : Array) {
         super(key);
@@ -21,17 +20,6 @@ public class HMGET extends KeyCommand {
 
     override public function get name():String {
         return "HMGET";
-    }
-
-    public function get result() : Array {
-        return _values;
-    }
-
-    override protected function processBulkResponse(response:ByteArray):void {
-        if (response && response.length > 0) {
-            var p:String = response.readUTFBytes(response.length);
-            _values.push(p);
-        }
     }
 
     override protected function getUnifiedCommand() : ByteArray {

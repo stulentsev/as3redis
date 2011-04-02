@@ -23,10 +23,6 @@ public class SMOVE extends RedisCommand {
         return serializeToUnified(name, _sourceKey, _destinationKey, _value);
     }
 
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
-
     override public function toStringCommand():String {
         return "[" + name + " " + _sourceKey + " " + _destinationKey + " " + toStringValue(_value) + "]";
     }

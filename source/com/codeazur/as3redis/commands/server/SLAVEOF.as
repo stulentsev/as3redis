@@ -1,6 +1,7 @@
 package com.codeazur.as3redis.commands.server {
 import com.codeazur.as3redis.RedisCommand;
 
+import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class SLAVEOF extends RedisCommand {
@@ -16,15 +17,14 @@ public class SLAVEOF extends RedisCommand {
         return "SLAVEOF";
     }
 
-    override public function send(stream:IDataOutput):void {
+    override protected function getUnifiedCommand() : ByteArray {
         if (_host != null && _host.length > 0 && _port >= 0) {
-            stream.writeUTFBytes(name + " " + _host + " " + _port + "\r\n");
+            return serializeToUnified(name, _host,  _port);
         } else if (_host == null && _port < 0) {
-            stream.writeUTFBytes(name + " no one\r\n");
+            return serializeToUnified(name, "no", "one");
         } else {
             throw(new Error("Host and port must both either be valid or null/-1"));
         }
-        super.send(stream);
     }
 
     override public function toStringCommand():String {

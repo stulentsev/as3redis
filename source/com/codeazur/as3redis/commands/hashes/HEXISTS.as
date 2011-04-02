@@ -18,9 +18,5 @@ public class HEXISTS extends KeyFieldCommand {
     override public function get name():String {
         return "HEXISTS";
     }
-
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
 }
 }

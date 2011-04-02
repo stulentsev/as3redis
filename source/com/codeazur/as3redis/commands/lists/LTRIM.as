@@ -18,9 +18,6 @@ public class LTRIM extends RedisCommand {
     override public function get name():String {
         return "LTRIM";
     }
-    public function get result() : String {
-        return _responseMessage;
-    }
 
     override protected function getUnifiedCommand() : ByteArray {
         return serializeToUnified(name, _key,  _startIndex, _endIndex);

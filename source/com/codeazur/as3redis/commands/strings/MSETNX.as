@@ -15,10 +15,6 @@ public class MSETNX extends RedisCommand {
         return "MSETNX";
     }
 
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         var args : Array = [name];
         if(_keysAndValues.length % 2 != 0) {

@@ -17,10 +17,6 @@ public class RPOPLPUSH extends RedisCommand {
         return "RPOPLPUSH";
     }
 
-    public function get result() : String {
-        return firstResponseBulkAsString;
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         return serializeToUnified(name, _sourceKey,  _destinationKey);
     }

@@ -10,9 +10,5 @@ public class SETNX extends KeyValueCommand {
         return "SETNX";
     }
 
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
-
 }
 }

@@ -42,9 +42,37 @@ public class RedisCommand {
         return _roundtrip;
     }
 
+    public function get result() : * {
+        if(_responseType == RESPONSE_TYPE_INTEGER) {
+            return parseInt(_responseMessage);
+        }
+
+        if(_responseType == RESPONSE_TYPE_STRING) {
+            return _responseMessage;
+        }
+
+        if(_responseType == RESPONSE_TYPE_BULK) {
+            return firstResponseBulkAsString;
+        }
+
+        if(_responseType == RESPONSE_TYPE_BULK_MULTI) {
+            return responseBulkAsStrings;
+        }
+
+        if(_responseType == RESPONSE_TYPE_ERROR) {
+            return _responseMessage;
+        }
+
+        if(_responseType == RESPONSE_TYPE_UNDEFINED) {
+            throw new Error("Response type is undefined. Shouldn't happen.")
+        }
+
+        return null;
+    }
+
     public function get firstResponseBulkAsString():String {
         var strArray:Array = responseBulkAsStrings;
-        if (strArray != null || strArray.length > 0)
+        if (strArray != null && strArray.length > 0)
             return strArray[0];
         return null;
     }

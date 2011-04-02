@@ -10,9 +10,5 @@ public class SPOP extends KeyCommand {
         return "SPOP";
     }
 
-    public function get result() : String {
-        return firstResponseBulkAsString;
-    }
-
 }
 }

@@ -18,9 +18,5 @@ public class HDEL extends KeyFieldCommand {
     override public function get name():String {
         return "HDEL";
     }
-
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
 }
 }

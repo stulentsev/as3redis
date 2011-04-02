@@ -11,7 +11,6 @@ import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class HGET extends KeyFieldCommand {
-    private var _value : String = null;
 
     public function HGET(key : String, field : String) {
         super(key, field);
@@ -19,17 +18,6 @@ public class HGET extends KeyFieldCommand {
 
     override public function get name():String {
         return "HGET";
-    }
-
-    public function get result() : * {
-        return _value;
-    }
-
-    override protected function processBulkResponse(response:ByteArray):void {
-        if (response && response.length > 0) {
-            var p:String = response.readUTFBytes(response.length);
-            _value = p;
-        }
     }
 }
 }

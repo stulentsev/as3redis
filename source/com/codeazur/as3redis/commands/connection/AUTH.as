@@ -15,10 +15,6 @@ public class AUTH extends RedisCommand {
         return "AUTH";
     }
 
-    public function get result() : String {
-        return _responseMessage;
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         return serializeToUnified(name, _password);
     }

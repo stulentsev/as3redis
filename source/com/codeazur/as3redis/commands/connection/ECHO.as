@@ -16,10 +16,6 @@ public class ECHO extends RedisCommand {
         return "ECHO";
     }
 
-    public function get result() : String {
-        return _response;
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         return serializeToUnified(name, _text);
     }

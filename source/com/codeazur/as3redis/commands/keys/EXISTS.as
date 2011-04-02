@@ -10,10 +10,5 @@ public class EXISTS extends KeyCommand {
     override public function get name():String {
         return "EXISTS";
     }
-
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
-
 }
 }

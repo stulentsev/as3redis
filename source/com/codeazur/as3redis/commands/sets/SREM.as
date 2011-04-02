@@ -9,9 +9,5 @@ public class SREM extends KeyValueCommand {
     override public function get name():String {
         return "SREM";
     }
-
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
 }
 }

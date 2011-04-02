@@ -17,10 +17,6 @@ public class RENAME extends RedisCommand {
         return "RENAME";
     }
 
-    public function get result() : String {
-        return _responseMessage;
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         return serializeToUnified(name, _oldKey, _newKey);
     }

@@ -9,9 +9,5 @@ public class LPOP extends KeyCommand {
     override public function get name():String {
         return "LPOP";
     }
-
-    public function get result() : String {
-        return firstResponseBulkAsString;
-    }
 }
 }

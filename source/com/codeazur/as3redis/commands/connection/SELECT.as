@@ -22,9 +22,5 @@ public class SELECT extends RedisCommand {
     override public function toStringCommand():String {
         return "[" + name + " " + _dbIndex + "]";
     }
-
-    public function get result() : String {
-        return _responseMessage;
-    }
 }
 }

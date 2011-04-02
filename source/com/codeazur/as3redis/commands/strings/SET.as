@@ -9,9 +9,5 @@ public class SET extends KeyValueCommand {
     override public function get name():String {
         return "SET";
     }
-
-    public function get result() : String {
-        return _responseMessage;
-    }
 }
 }

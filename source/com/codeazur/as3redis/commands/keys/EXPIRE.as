@@ -21,10 +21,6 @@ public class EXPIRE extends RedisCommand {
         return serializeToUnified(name, _key, _seconds);
     }
 
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
-
     override public function toStringCommand():String {
         return "[" + name + " " + _key + " " + _seconds + "]";
     }

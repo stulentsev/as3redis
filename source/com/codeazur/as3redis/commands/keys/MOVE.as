@@ -17,10 +17,6 @@ public class MOVE extends RedisCommand {
         return "MOVE";
     }
 
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         return serializeToUnified(name, _key,  _dbIndex);
     }

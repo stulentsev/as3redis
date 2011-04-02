@@ -24,11 +24,6 @@ public class DEL extends RedisCommand {
         return serializeToUnified.apply(this, args);
     }
 
-    public function get result () : int {
-        return parseInt(_responseMessage);
-    }
-
-
     override public function toStringCommand():String {
         return "[" + name + ((_keys.length > 0) ? " " + _keys.join(" ") : "") + "]";
     }

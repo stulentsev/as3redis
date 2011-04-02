@@ -16,10 +16,6 @@ public class MGET extends RedisCommand {
     }
 
 
-    public function get result() : Array {
-        return responseBulkAsStrings;
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         var args : Array = [name];
         for each(var f : String in _keys) {

@@ -19,7 +19,7 @@ public class HGETALL extends KeyCommand {
         super(key);
     }
 
-    public function get result() : Object {
+    override public function get result() : * {
         return _keyValues;
     }
 

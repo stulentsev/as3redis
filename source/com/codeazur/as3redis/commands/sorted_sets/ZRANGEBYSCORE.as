@@ -1,6 +1,7 @@
 package com.codeazur.as3redis.commands.sorted_sets {
 import com.codeazur.as3redis.RedisCommand;
 
+import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 public class ZRANGEBYSCORE extends RedisCommand {
@@ -18,9 +19,8 @@ public class ZRANGEBYSCORE extends RedisCommand {
         return "ZRANGEBYSCORE";
     }
 
-    override public function send(stream:IDataOutput):void {
-        stream.writeUTFBytes(name + " " + _key + " " + _minScore + " " + _maxScore + "\r\n");
-        super.send(stream);
+    override protected function getUnifiedCommand():ByteArray {
+        return serializeToUnified(name, _key, _minScore, _maxScore);
     }
 
     override public function toStringCommand():String {

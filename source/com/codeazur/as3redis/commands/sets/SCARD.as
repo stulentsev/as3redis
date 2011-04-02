@@ -9,9 +9,5 @@ public class SCARD extends KeyCommand {
     override public function get name():String {
         return "SCARD";
     }
-
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
 }
 }

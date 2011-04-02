@@ -19,10 +19,6 @@ public class LREM extends RedisCommand {
         return "LREM";
     }
 
-    public function get result() : int {
-        return parseInt(_responseMessage);
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         return serializeToUnified(name, _key,  _count, _value);
     }

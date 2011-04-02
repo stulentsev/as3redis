@@ -10,9 +10,5 @@ public class GET extends KeyCommand {
         return "GET";
     }
 
-    public function get result() : String {
-        return firstResponseBulkAsString;
-    }
-
 }
 }

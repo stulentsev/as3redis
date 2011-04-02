@@ -14,10 +14,6 @@ public class GETSET extends KeyValueCommand {
         return "GETSET";
     }
 
-    public function get result() : String {
-        return _response;
-    }
-
     override protected function processBulkResponse(response:ByteArray):void {
         if (response && response.length > 0) {
             var p:String = response.readUTFBytes(response.length);

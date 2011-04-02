@@ -8,9 +8,5 @@ public class QUIT extends SimpleCommand {
     override public function get name():String {
         return "QUIT";
     }
-
-    public function get result() : String {
-        return _responseMessage;
-    }
 }
 }

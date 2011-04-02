@@ -19,10 +19,6 @@ public class LSET extends RedisCommand {
         return "LSET";
     }
 
-    public function get result() : String {
-        return _responseMessage;
-    }
-
     override protected function getUnifiedCommand() : ByteArray {
         return serializeToUnified(name, _key,  _index, _value);
     }
