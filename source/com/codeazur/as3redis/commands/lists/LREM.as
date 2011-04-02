@@ -19,12 +19,12 @@ public class LREM extends RedisCommand {
         return "LREM";
     }
 
-    override public function send(stream:IDataOutput):void {
-        var baValue:ByteArray = serializeValue(_value);
-        stream.writeUTFBytes(name + " " + _key + " " + _count + " " + baValue.length + "\r\n");
-        stream.writeBytes(baValue);
-        stream.writeUTFBytes("\r\n");
-        super.send(stream);
+    public function get result() : int {
+        return parseInt(_responseMessage);
+    }
+
+    override protected function getUnifiedCommand() : ByteArray {
+        return serializeToUnified(name, _key,  _count, _value);
     }
 
     override public function toStringCommand():String {

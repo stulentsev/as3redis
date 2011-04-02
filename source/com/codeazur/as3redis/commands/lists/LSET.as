@@ -19,12 +19,12 @@ public class LSET extends RedisCommand {
         return "LSET";
     }
 
-    override public function send(stream:IDataOutput):void {
-        var baValue:ByteArray = serializeValue(_value);
-        stream.writeUTFBytes(name + " " + _key + " " + _index + " " + baValue.length + "\r\n");
-        stream.writeBytes(baValue);
-        stream.writeUTFBytes("\r\n");
-        super.send(stream);
+    public function get result() : String {
+        return _responseMessage;
+    }
+
+    override protected function getUnifiedCommand() : ByteArray {
+        return serializeToUnified(name, _key,  _index, _value);
     }
 
     override public function toStringCommand():String {

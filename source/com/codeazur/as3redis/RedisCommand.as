@@ -42,6 +42,13 @@ public class RedisCommand {
         return _roundtrip;
     }
 
+    public function get firstResponseBulkAsString():String {
+        var strArray:Array = responseBulkAsStrings;
+        if (strArray != null || strArray.length > 0)
+            return strArray[0];
+        return null;
+    }
+
     public function get responseBulkAsStrings():Array {
         if (_responseBulkAsStrings == null) {
             if (_responseBulk != null && _responseBulk.length > 0) {

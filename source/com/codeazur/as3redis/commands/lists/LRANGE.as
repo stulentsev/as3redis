@@ -19,9 +19,12 @@ public class LRANGE extends RedisCommand {
         return "LRANGE";
     }
 
-    override public function send(stream:IDataOutput):void {
-        stream.writeUTFBytes(name + " " + _key + " " + _startIndex + " " + _endIndex + "\r\n");
-        super.send(stream);
+    public function get result() : Array {
+        return responseBulkAsStrings;
+    }
+
+    override protected function getUnifiedCommand() : ByteArray {
+        return serializeToUnified(name, _key,  _startIndex, _endIndex);
     }
 
     override public function toStringCommand():String {

@@ -9,5 +9,9 @@ public class LPUSH extends KeyValueCommand {
     override public function get name():String {
         return "LPUSH";
     }
+
+    public function get result() : int {
+        return parseInt(_responseMessage);
+    }
 }
 }
