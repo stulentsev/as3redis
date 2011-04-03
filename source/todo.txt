@@ -45,11 +45,11 @@ sorted sets
     zunionstore
 
 pub/sub
-    psubscribe
-    publish
-    punsubscribe
-    subscribe
-    unsubscribe
++    psubscribe
++    publish
++    punsubscribe
++    subscribe
++    unsubscribe
 
 transactions
     discard
@@ -59,10 +59,10 @@ transactions
     watch
 
 server
-    bgrewriteaof
-    config get
-    config set
-    config resetstat
++    bgrewriteaof
++    config get
++    config set
++    config resetstat
     debug object
     debug segfault
     sync (internal)
