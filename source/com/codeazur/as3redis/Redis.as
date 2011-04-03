@@ -9,6 +9,16 @@ import com.codeazur.as3redis.commands.sets.*;
 import com.codeazur.as3redis.commands.sorted_sets.*;
 import com.codeazur.as3redis.commands.strings.*;
 
+import com.codeazur.as3redis.commands.transactions.DISCARD;
+
+import com.codeazur.as3redis.commands.transactions.EXEC;
+
+import com.codeazur.as3redis.commands.transactions.MULTI;
+
+import com.codeazur.as3redis.commands.transactions.UNWATCH;
+
+import com.codeazur.as3redis.commands.transactions.WATCH;
+
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
@@ -176,6 +186,29 @@ public class Redis extends EventDispatcher {
 
     public function sendSTRLEN(key:String):RedisCommand {
         return addCommand(new STRLEN(key));
+    }
+
+
+    // Commands of transaction family
+
+    public function sendDISCARD():RedisCommand {
+        return addCommand(new DISCARD());
+    }
+
+    public function sendEXEC():RedisCommand {
+        return addCommand(new EXEC());
+    }
+
+    public function sendMULTI():RedisCommand {
+        return addCommand(new MULTI());
+    }
+
+    public function sendUNWATCH():RedisCommand {
+        return addCommand(new UNWATCH());
+    }
+
+    public function sendWATCH(keys : Array):RedisCommand {
+        return addCommand(new WATCH(keys));
     }
 
     // Commands operating on hashes
