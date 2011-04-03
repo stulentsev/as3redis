@@ -83,43 +83,31 @@ public class Redis extends EventDispatcher {
 
     // Connection handling
 
+    public function sendAUTH(password:String):RedisCommand {
+        return addCommand(new AUTH(password));
+    }
+
+    public function sendECHO(text:String):RedisCommand {
+        return addCommand(new ECHO(text));
+    }
+
+    public function sendPING():RedisCommand {
+        return addCommand(new PING());
+    }
+
     public function sendQUIT():RedisCommand {
         return addCommand(new QUIT());
     }
 
-    public function sendAUTH(password:String):RedisCommand {
-        return addCommand(new AUTH(password));
+    public function sendSELECT(dbIndex:uint):RedisCommand {
+        return addCommand(new SELECT(dbIndex));
     }
 
 
     // Commands operating on string values
 
-    public function sendSET(key:String, value:*):RedisCommand {
-        return addCommand(new SET(key, value));
-    }
-
-    public function sendGET(key:String):RedisCommand {
-        return addCommand(new GET(key));
-    }
-
-    public function sendGETSET(key:String, value:*):RedisCommand {
-        return addCommand(new GETSET(key, value));
-    }
-
-    public function sendMGET(... keys):RedisCommand {
-        return addCommand(new MGET(keys));
-    }
-
-    public function sendSETNX(key:String, value:*):RedisCommand {
-        return addCommand(new SETNX(key, value));
-    }
-
-    public function sendINCR(key:String):RedisCommand {
-        return addCommand(new INCR(key));
-    }
-
-    public function sendINCRBY(key:String, value:uint):RedisCommand {
-        return addCommand(new INCRBY(key, value));
+    public function sendAPPEND(key:String, value:*):RedisCommand {
+        return addCommand(new APPEND(key, value));
     }
 
     public function sendDECR(key:String):RedisCommand {
@@ -130,59 +118,94 @@ public class Redis extends EventDispatcher {
         return addCommand(new DECRBY(key, value));
     }
 
-    public function sendEXISTS(key:String):RedisCommand {
-        return addCommand(new EXISTS(key));
+    public function sendGET(key:String):RedisCommand {
+        return addCommand(new GET(key));
     }
 
-    public function sendDEL(keys:Array):RedisCommand {
-        return addCommand(new DEL(keys));
+    public function sendGETBIT(key:String, offset : int):RedisCommand {
+        return addCommand(new GETBIT(key, offset));
     }
 
-    public function sendTYPE(key:String):RedisCommand {
-        return addCommand(new TYPE(key));
+    public function sendGETRANGE(key:String, start : int, end : int):RedisCommand {
+        return addCommand(new GETRANGE(key, start, end));
     }
 
+    public function sendGETSET(key:String, value:*):RedisCommand {
+        return addCommand(new GETSET(key, value));
+    }
+
+    public function sendINCR(key:String):RedisCommand {
+        return addCommand(new INCR(key));
+    }
+
+    public function sendINCRBY(key:String, value:uint):RedisCommand {
+        return addCommand(new INCRBY(key, value));
+    }
+
+    public function sendMGET(... keys):RedisCommand {
+        return addCommand(new MGET(keys));
+    }
+
+    public function sendMSET(... keysAndValues):RedisCommand {
+        return addCommand(new MSET(keysAndValues));
+    }
+
+    public function sendMSETNX(... keysAndValues):RedisCommand {
+        return addCommand(new MSETNX(keysAndValues));
+    }
+
+    public function sendSET(key:String, value:*):RedisCommand {
+        return addCommand(new SET(key, value));
+    }
+
+    public function sendSETBIT(key : String, offset : int, value : int) : RedisCommand {
+        return addCommand(new SETBIT(key, offset, value));
+    }
+
+    public function sendSETEX(key : String, seconds : int, value : int) : RedisCommand {
+        return addCommand(new SETEX(key, seconds, value));
+    }
+
+    public function sendSETNX(key:String, value:*):RedisCommand {
+        return addCommand(new SETNX(key, value));
+    }
+
+    public function sendSETRANGE(key : String, offset : int, value : String) : RedisCommand {
+        return addCommand(new SETRANGE(key, offset, value));
+    }
+
+    public function sendSTRLEN(key:String):RedisCommand {
+        return addCommand(new STRLEN(key));
+    }
 
     // Commands operating on hashes
-
-    public function sendHGET(key:String, field:String):RedisCommand {
-        return addCommand(new HGET(key, field));
-    }
-
-    public function sendHSET(key:String, field:String, value:*):RedisCommand {
-        return addCommand(new HSET(key, field, value));
-    }
-
-    public function sendHSETNX(key:String, field:String, value:*):RedisCommand {
-        return addCommand(new HSETNX(key, field, value));
-    }
-
-    public function sendHINCRBY(key:String, field:String, incr:int):RedisCommand {
-        return addCommand(new HINCRBY(key, field, incr));
-    }
 
     public function sendHDEL(key:String, field:String):RedisCommand {
         return addCommand(new HDEL(key, field));
     }
 
-    public function sendHKEYS(key:String):RedisCommand {
-        return addCommand(new HKEYS(key));
+    public function sendHEXISTS(key:String, field:String):RedisCommand {
+        return addCommand(new HEXISTS(key, field));
     }
 
-    public function sendHVALS(key:String):RedisCommand {
-        return addCommand(new HVALS(key));
+    public function sendHGET(key:String, field:String):RedisCommand {
+        return addCommand(new HGET(key, field));
     }
 
     public function sendHGETALL(key:String):RedisCommand {
         return addCommand(new HGETALL(key));
     }
 
-    public function sendHLEN(key:String):RedisCommand {
-        return addCommand(new HLEN(key));
+    public function sendHINCRBY(key:String, field:String, incr:int):RedisCommand {
+        return addCommand(new HINCRBY(key, field, incr));
     }
 
-    public function sendHEXISTS(key:String, field:String):RedisCommand {
-        return addCommand(new HEXISTS(key, field));
+    public function sendHKEYS(key:String):RedisCommand {
+        return addCommand(new HKEYS(key));
+    }
+
+    public function sendHLEN(key:String):RedisCommand {
+        return addCommand(new HLEN(key));
     }
 
     public function sendHMGET(key:String, ... fields):RedisCommand {
@@ -193,10 +216,46 @@ public class Redis extends EventDispatcher {
         return addCommand(new HMSET(key, fieldsAndValues));
     }
 
+    public function sendHSET(key:String, field:String, value:*):RedisCommand {
+        return addCommand(new HSET(key, field, value));
+    }
+
+    public function sendHSETNX(key:String, field:String, value:*):RedisCommand {
+        return addCommand(new HSETNX(key, field, value));
+    }
+
+    public function sendHVALS(key:String):RedisCommand {
+        return addCommand(new HVALS(key));
+    }
+
     // Commands operating on the key space
+
+    public function sendDEL(keys:Array):RedisCommand {
+        return addCommand(new DEL(keys));
+    }
+
+    public function sendEXISTS(key:String):RedisCommand {
+        return addCommand(new EXISTS(key));
+    }
+
+    public function sendEXPIRE(key:String, seconds:uint):RedisCommand {
+        return addCommand(new EXPIRE(key, seconds));
+    }
+
+    public function sendEXPIREAT(key:String, timestamp:uint):RedisCommand {
+        return addCommand(new EXPIREAT(key, timestamp));
+    }
 
     public function sendKEYS(pattern:String):RedisCommand {
         return addCommand(new KEYS(pattern));
+    }
+
+    public function sendMOVE(key:String, dbIndex:uint):RedisCommand {
+        return addCommand(new MOVE(key, dbIndex));
+    }
+
+    public function sendPERSIST(key:String):RedisCommand {
+        return addCommand(new PERSIST(key));
     }
 
     public function sendRANDOMKEY():RedisCommand {
@@ -211,76 +270,88 @@ public class Redis extends EventDispatcher {
         return addCommand(new RENAMENX(oldKey, newKey));
     }
 
-    public function sendDBSIZE():RedisCommand {
-        return addCommand(new DBSIZE());
-    }
-
-    public function sendEXPIRE(key:String, seconds:uint):RedisCommand {
-        return addCommand(new EXPIRE(key, seconds));
+    public function sendSORT(key:String, limitMin:int = -1, limitMax:int = -1, desc:Boolean = false, alpha:Boolean = false, byPattern:String = null, getPatterns:Array = null):RedisCommand {
+        return addCommand(new SORT(key, limitMin, limitMax, desc, alpha, byPattern, getPatterns));
     }
 
     public function sendTTL(key:String):RedisCommand {
         return addCommand(new TTL(key));
     }
 
-    // Version 1.1
-    public function sendMSET(... keysAndValues):RedisCommand {
-        return addCommand(new MSET(keysAndValues));
-    }
-
-    // Version 1.1
-    public function sendMSETNX(... keysAndValues):RedisCommand {
-        return addCommand(new MSETNX(keysAndValues));
+    public function sendTYPE(key:String):RedisCommand {
+        return addCommand(new TYPE(key));
     }
 
 
     // Commands operating on lists
 
-    public function sendRPUSH(key:String, value:*):RedisCommand {
-        return addCommand(new RPUSH(key, value));
+    public function sendBLPOP(keys:Array, timeout:uint):RedisCommand {
+        return addCommand(new BLPOP(keys, timeout));
     }
 
-    public function sendLPUSH(key:String, value:*):RedisCommand {
-        return addCommand(new LPUSH(key, value));
+    public function sendBRPOP(keys:Array, timeout:uint):RedisCommand {
+        return addCommand(new BRPOP(keys, timeout));
     }
 
-    public function sendLLEN(key:String):RedisCommand {
-        return addCommand(new LLEN(key));
-    }
-
-    public function sendLRANGE(key:String, startIndex:int, endIndex:int):RedisCommand {
-        return addCommand(new LRANGE(key, startIndex, endIndex));
-    }
-
-    public function sendLTRIM(key:String, startIndex:int, endIndex:int):RedisCommand {
-        return addCommand(new LTRIM(key, startIndex, endIndex));
+    public function sendBRPOPLPUSH(source : String, destination : String, timeout : uint):RedisCommand {
+        return addCommand(new BRPOPLPUSH(source, destination, timeout));
     }
 
     public function sendLINDEX(key:String, index:int):RedisCommand {
         return addCommand(new LINDEX(key, index));
     }
 
-    public function sendLSET(key:String, index:int, value:*):RedisCommand {
-        return addCommand(new LSET(key, index, value));
+    public function sendLINSERT(key : String, beforeOrAfter : String, pivot : *, value : *):RedisCommand {
+        return addCommand(new LINSERT(key, beforeOrAfter, pivot, value));
     }
 
-    public function sendLREM(key:String, count:int, value:*):RedisCommand {
-        return addCommand(new LREM(key, count, value));
+    public function sendLLEN(key:String):RedisCommand {
+        return addCommand(new LLEN(key));
     }
 
     public function sendLPOP(key:String):RedisCommand {
         return addCommand(new LPOP(key));
     }
 
+    public function sendLPUSH(key:String, value:*):RedisCommand {
+        return addCommand(new LPUSH(key, value));
+    }
+
+    public function sendLPUSHX(key:String, value:*):RedisCommand {
+        return addCommand(new LPUSHX(key, value));
+    }
+
+    public function sendLRANGE(key:String, startIndex:int, endIndex:int):RedisCommand {
+        return addCommand(new LRANGE(key, startIndex, endIndex));
+    }
+
+    public function sendLREM(key:String, count:int, value:*):RedisCommand {
+        return addCommand(new LREM(key, count, value));
+    }
+
+    public function sendLSET(key:String, index:int, value:*):RedisCommand {
+        return addCommand(new LSET(key, index, value));
+    }
+
+    public function sendLTRIM(key:String, startIndex:int, endIndex:int):RedisCommand {
+        return addCommand(new LTRIM(key, startIndex, endIndex));
+    }
+
     public function sendRPOP(key:String):RedisCommand {
         return addCommand(new RPOP(key));
     }
 
-    // Version 1.1
     public function sendRPOPLPUSH(sourceKey:String, destinationKey:String):RedisCommand {
         return addCommand(new RPOPLPUSH(sourceKey, destinationKey));
     }
 
+    public function sendRPUSH(key:String, value:*):RedisCommand {
+        return addCommand(new RPUSH(key, value));
+    }
+
+    public function sendRPUSHX(key:String, value:*):RedisCommand {
+        return addCommand(new RPUSHX(key, value));
+    }
 
     // Commands operating on sets
 
@@ -288,40 +359,8 @@ public class Redis extends EventDispatcher {
         return addCommand(new SADD(key, value));
     }
 
-    public function sendSREM(key:String, value:*):RedisCommand {
-        return addCommand(new SREM(key, value));
-    }
-
-    public function sendSPOP(key:String):RedisCommand {
-        return addCommand(new SPOP(key));
-    }
-
-    public function sendSMOVE(sourceKey:String, destinationKey:String, value:*):RedisCommand {
-        return addCommand(new SMOVE(sourceKey, destinationKey, value));
-    }
-
     public function sendSCARD(key:String):RedisCommand {
         return addCommand(new SCARD(key));
-    }
-
-    public function sendSISMEMBER(key:String, value:*):RedisCommand {
-        return addCommand(new SISMEMBER(key, value));
-    }
-
-    public function sendSINTER(keys:Array):RedisCommand {
-        return addCommand(new SINTER(keys));
-    }
-
-    public function sendSINTERSTORE(destinationKey:String, keys:Array):RedisCommand {
-        return addCommand(new SINTERSTORE(destinationKey, keys));
-    }
-
-    public function sendSUNION(keys:Array):RedisCommand {
-        return addCommand(new SUNION(keys));
-    }
-
-    public function sendSUNIONSTORE(destinationKey:String, keys:Array):RedisCommand {
-        return addCommand(new SUNIONSTORE(destinationKey, keys));
     }
 
     public function sendSDIFF(keys:Array):RedisCommand {
@@ -332,17 +371,47 @@ public class Redis extends EventDispatcher {
         return addCommand(new SDIFFSTORE(destinationKey, keys));
     }
 
+    public function sendSINTER(keys:Array):RedisCommand {
+        return addCommand(new SINTER(keys));
+    }
+
+    public function sendSINTERSTORE(destinationKey:String, keys:Array):RedisCommand {
+        return addCommand(new SINTERSTORE(destinationKey, keys));
+    }
+
+    public function sendSISMEMBER(key:String, value:*):RedisCommand {
+        return addCommand(new SISMEMBER(key, value));
+    }
+
     public function sendSMEMBERS(key:String):RedisCommand {
         return addCommand(new SMEMBERS(key));
     }
 
-    // Version 1.1
+    public function sendSMOVE(sourceKey:String, destinationKey:String, value:*):RedisCommand {
+        return addCommand(new SMOVE(sourceKey, destinationKey, value));
+    }
+
+    public function sendSPOP(key:String):RedisCommand {
+        return addCommand(new SPOP(key));
+    }
+
     public function sendSRANDMEMBER(key:String):RedisCommand {
         return addCommand(new SRANDMEMBER(key));
     }
 
+    public function sendSREM(key:String, value:*):RedisCommand {
+        return addCommand(new SREM(key, value));
+    }
 
-    // Version 1.1
+    public function sendSUNION(keys:Array):RedisCommand {
+        return addCommand(new SUNION(keys));
+    }
+
+    public function sendSUNIONSTORE(destinationKey:String, keys:Array):RedisCommand {
+        return addCommand(new SUNIONSTORE(destinationKey, keys));
+    }
+
+
     // Commands operating on sorted sets (zsets)
 
     public function sendZADD(key:String, score:Number, value:*):RedisCommand {
@@ -419,54 +488,77 @@ public class Redis extends EventDispatcher {
     }
 
 
-    // Multiple databases handling commands
+    // Server control commands
 
-    public function sendSELECT(dbIndex:uint):RedisCommand {
-        return addCommand(new SELECT(dbIndex));
-    }
-
-    public function sendMOVE(key:String, dbIndex:uint):RedisCommand {
-        return addCommand(new MOVE(key, dbIndex));
-    }
-
-    public function sendFLUSHDB():RedisCommand {
-        return addCommand(new FLUSHDB());
-    }
-
-    public function sendFLUSHALL():RedisCommand {
-        return addCommand(new FLUSHALL());
-    }
-
-
-    // Sorting
-
-    public function sendSORT(key:String, limitMin:int = -1, limitMax:int = -1, desc:Boolean = false, alpha:Boolean = false, byPattern:String = null, getPatterns:Array = null):RedisCommand {
-        return addCommand(new SORT(key, limitMin, limitMax, desc, alpha, byPattern, getPatterns));
-    }
-
-
-    // Persistence control commands
-
-    public function sendSAVE():RedisCommand {
-        return addCommand(new SAVE());
+    public function sendBGREWRITEAOF():RedisCommand {
+        return addCommand(new BGREWRITEAOF());
     }
 
     public function sendBGSAVE():RedisCommand {
         return addCommand(new BGSAVE());
     }
 
+    public function sendCONFIGGET(parameter : String):RedisCommand {
+        return addCommand(new CONFIGGET(parameter));
+    }
+
+    public function sendCONFIGRESETSTAT():RedisCommand {
+        return addCommand(new CONFIGRESETSTAT());
+    }
+
+    public function sendCONFIGSET(parameter : String, value : *):RedisCommand {
+        return addCommand(new CONFIGSET(parameter, value));
+    }
+
+    public function sendDBSIZE():RedisCommand {
+        return addCommand(new DBSIZE());
+    }
+
+    public function sendFLUSHALL():RedisCommand {
+        return addCommand(new FLUSHALL());
+    }
+
+    public function sendFLUSHDB():RedisCommand {
+        return addCommand(new FLUSHDB());
+    }
+
+    public function sendINFO():RedisCommand {
+        return addCommand(new INFO());
+    }
+
     public function sendLASTSAVE():RedisCommand {
         return addCommand(new LASTSAVE());
+    }
+
+    public function sendSAVE():RedisCommand {
+        return addCommand(new SAVE());
     }
 
     public function sendSHUTDOWN():RedisCommand {
         return addCommand(new SHUTDOWN());
     }
 
+    public function sendSLAVEOF(host:String = null, port:int = -1):RedisCommand {
+        return addCommand(new SLAVEOF(host, port));
+    }
+
     // Commands of pub/sub family
+
+    public function sendPSUBSCRIBE(patterns:Array):RedisCommand {
+        var cmd:PSUBSCRIBE = new PSUBSCRIBE(patterns);
+        for each(var pat : String in patterns) {
+            _subscribers[pat] = cmd;
+        }
+
+        return addCommand(cmd);
+    }
 
     public function sendPUBLISH(channel:String, message:String):RedisCommand {
         return addCommand(new PUBLISH(channel, message));
+    }
+
+    public function sendPUNSUBSCRIBE(patterns:Array):RedisCommand {
+        return addCommand(new PUNSUBSCRIBE(patterns));
     }
 
     public function sendSUBSCRIBE(channels:Array):RedisCommand {
@@ -479,45 +571,13 @@ public class Redis extends EventDispatcher {
         return addCommand(cmd);
     }
 
-    public function sendPSUBSCRIBE(patterns:Array):RedisCommand {
-        var cmd:PSUBSCRIBE = new PSUBSCRIBE(patterns);
-        for each(var pat : String in patterns) {
-            _subscribers[pat] = cmd;
-        }
-
-        return addCommand(cmd);
-    }
-
     public function sendUNSUBSCRIBE(channels:Array):RedisCommand {
         return addCommand(new UNSUBSCRIBE(channels));
     }
 
-    public function sendPUNSUBSCRIBE(patterns:Array):RedisCommand {
-        return addCommand(new PUNSUBSCRIBE(patterns));
-    }
 
 
-    // Remote server control commands
-
-    public function sendINFO():RedisCommand {
-        return addCommand(new INFO());
-    }
-
-    public function sendSLAVEOF(host:String = null, port:int = -1):RedisCommand {
-        return addCommand(new SLAVEOF(host, port));
-    }
-
-
-    // Misc commands (undocumented)
-
-    public function sendPING():RedisCommand {
-        return addCommand(new PING());
-    }
-
-    public function sendECHO(text:String):RedisCommand {
-        return addCommand(new ECHO(text));
-    }
-
+    // Internal commands
 
     protected function addCommand(command:RedisCommand):RedisCommand {
         idleQueue.push(command);

@@ -6,7 +6,7 @@ import flash.utils.ByteArray;
 public class LINSERT extends KeyValueValueCommand {
     private var _beforeOrAfter : String;
 
-    public function LINSERT(key:String, beforeOrAfter:String, pivot:String, value:*) {
+    public function LINSERT(key:String, beforeOrAfter:String, pivot:*, value:*) {
         super(key, pivot, value);
         _beforeOrAfter = beforeOrAfter;
 

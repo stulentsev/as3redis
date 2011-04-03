@@ -3,7 +3,7 @@ import com.codeazur.as3redis.commands.base.KeyCommand;
 import com.codeazur.as3redis.commands.base.KeyValueCommand;
 
 public class EXPIREAT extends KeyValueCommand {
-    public function EXPIREAT(key:String, timestamp : String) {
+    public function EXPIREAT(key:String, timestamp : uint) {
         super(key, timestamp);
     }
 
