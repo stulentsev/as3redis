@@ -5,13 +5,13 @@ import com.codeazur.as3redis.commands.base.KeyValueValueCommand;
 
 import flash.utils.ByteArray;
 
-public class ZADD extends KeyValueValueCommand {
-    public function ZADD(key:String, score:Number, value:*) {
-        super(key, score, value);
+public class ZINCRBY extends KeyValueValueCommand {
+    public function ZINCRBY(key:String, increment:Number, member:Number) {
+        super(key, increment, member);
     }
 
     override public function get name():String {
-        return "ZADD";
+        return "ZINCRBY";
     }
 }
 }

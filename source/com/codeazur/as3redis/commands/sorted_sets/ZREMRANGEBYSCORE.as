@@ -5,13 +5,13 @@ import com.codeazur.as3redis.commands.base.KeyValueValueCommand;
 
 import flash.utils.ByteArray;
 
-public class ZADD extends KeyValueValueCommand {
-    public function ZADD(key:String, score:Number, value:*) {
-        super(key, score, value);
+public class ZREMRANGEBYSCORE extends KeyValueValueCommand {
+    public function ZREMRANGEBYSCORE(key:String, minScore:Number, maxScore:Number) {
+        super(key, minScore, maxScore);
     }
 
     override public function get name():String {
-        return "ZADD";
+        return "ZREMRANGEBYSCORE";
     }
 }
 }

@@ -12,18 +12,18 @@ strings:
 +    strlen
 
 hashes
-    hdel
-    hexists
-    hget
-    hgetall
-    hincrby
-    hkeys
-    hlen
-    hmget
-    hmset
-    hset
-    hsetnx
-    hvals
++    hdel
++    hexists
++    hget
++    hgetall
++    hincrby
++    hkeys
++    hlen
++    hmget
++    hmset
++    hset
++    hsetnx
++    hvals
 
 lists
     blpop
@@ -34,14 +34,14 @@ lists
     rpushhx
 
 sorted sets
-    zcount
-    zincrby
++    zcount
++    zincrby
     zinterstore
-    zrank
-    zremrangebyrank
-    zremrangebyscore
++    zrank
++    zremrangebyrank
++    zremrangebyscore
     zrevrangebyscore
-    zrevrank
++    zrevrank
     zunionstore
 
 pub/sub
