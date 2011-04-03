@@ -2,7 +2,6 @@ package com.codeazur.as3redis.commands.strings {
 import com.codeazur.as3redis.RedisCommand;
 
 import flash.utils.ByteArray;
-import flash.utils.IDataOutput;
 
 public class MSET extends RedisCommand {
     protected var _keysAndValues:Array;

@@ -5,7 +5,6 @@
 
 
 package com.codeazur.as3redis.commands.hashes {
-import flash.utils.ByteArray;
 import com.codeazur.as3redis.commands.base.KeyCommand;
 
 public class HVALS extends KeyCommand {

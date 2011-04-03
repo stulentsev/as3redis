@@ -36,6 +36,7 @@ public class INFO extends SimpleCommand {
     override protected function processBulkResponse(response:ByteArray):void {
         _paramCount = 0;
         if (response && response.length > 0) {
+            response.position = 0;
             var p:String = response.readUTFBytes(response.length);
             var pa:Array = p.split("\r\n");
             for (var i:uint = 0; i < pa.length; i++) {

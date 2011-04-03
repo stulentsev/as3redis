@@ -5,14 +5,14 @@
 
 
 package tests {
+import com.codeazur.as3redis.Redis;
 import com.codeazur.as3redis.commands.hashes.*;
-import com.codeazur.as3redis.commands.keys.DEL;
 
 public class Hashes extends TestSuiteBase {
 
 
-    public function Hashes(logger : Function) {
-        super(logger);
+    public function Hashes(logger : Function, red : Redis) {
+        super(logger, red);
 
         var fld1Exists : int = 0;
 
@@ -62,12 +62,12 @@ public class Hashes extends TestSuiteBase {
 
         addTest('HKEYS', [hk], function(cmd : HKEYS) : Boolean {
             var fields : Array = ['fld1', 'fld2'];
-            return cmd.result.sort().join('') == fields.sort().join('');
+            return cmd.result is Array &&  cmd.result.sort().join('') == fields.sort().join('');
         });
 
         addTest('HVALS', [hk], function(cmd : HVALS) : Boolean {
             var fields : Array = ['2', '7'];
-            return cmd.result.sort().join('') == fields.sort().join('');
+            return cmd.result is Array &&  cmd.result.sort().join('') == fields.sort().join('');
         });
 
         addTest('HLEN', [hk], function(cmd : HLEN) : Boolean {
@@ -89,6 +89,9 @@ public class Hashes extends TestSuiteBase {
         });
 
         addTest("HGETALL", [hk], function(cmd : HGETALL) : Boolean {
+            if(!(cmd.result is Object)) {
+                return false;
+            }
             var shouldBe : Object = {fld1 : '1',
                 fld2 : '7'};
 
@@ -101,7 +104,7 @@ public class Hashes extends TestSuiteBase {
 
         addTest("HMGET", [hk, 'fld1', 'fld2'], function(cmd : HMGET): Boolean {
             var shouldBe : Array = ['1', '7'];
-            return cmd.result.join('') == shouldBe.join('');
+            return cmd.result is Array && cmd.result.join('') == shouldBe.join('');
         });
 
         addTest("HMSET", [hk, 'fld1', 5, 'fld3', 6], function(cmd : HMSET): Boolean {
@@ -109,6 +112,9 @@ public class Hashes extends TestSuiteBase {
         });
 
         addTest("HGETALL", [hk], function(cmd : HGETALL) : Boolean {
+            if(!(cmd.result is Object)) {
+                return false;
+            }
             var shouldBe : Object = {fld1 : '5',
                 fld2 : '7',
                 fld3 : '6'

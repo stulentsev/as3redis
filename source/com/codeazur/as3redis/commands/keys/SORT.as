@@ -2,7 +2,6 @@ package com.codeazur.as3redis.commands.keys {
 import com.codeazur.as3redis.RedisCommand;
 
 import flash.utils.ByteArray;
-import flash.utils.IDataOutput;
 
 public class SORT extends RedisCommand {
     protected var _key:String;
@@ -13,8 +12,6 @@ public class SORT extends RedisCommand {
     protected var _byPattern:String;
     protected var _getPatterns:Array;
     protected var _storeToKey:String;
-
-    private var _resultElements:Array;
 
     public function SORT(key:String,
                          limitMin:int = -1,
@@ -81,13 +78,6 @@ public class SORT extends RedisCommand {
         }
 
         return serializeToUnified.apply(this, args);
-    }
-
-    override protected function processBulkResponse(response:ByteArray):void {
-        if (response && response.length > 0) {
-            var p:String = response.readUTFBytes(response.length);
-            _resultElements.push(p);
-        }
     }
 
     override public function toStringCommand():String {

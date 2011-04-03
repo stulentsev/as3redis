@@ -2,7 +2,6 @@ package com.codeazur.as3redis.commands.sorted_sets {
 import com.codeazur.as3redis.RedisCommand;
 
 import flash.utils.ByteArray;
-import flash.utils.IDataOutput;
 
 public class ZADD extends RedisCommand {
     protected var _key:String;

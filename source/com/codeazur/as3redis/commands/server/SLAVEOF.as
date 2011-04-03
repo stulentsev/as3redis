@@ -2,7 +2,6 @@ package com.codeazur.as3redis.commands.server {
 import com.codeazur.as3redis.RedisCommand;
 
 import flash.utils.ByteArray;
-import flash.utils.IDataOutput;
 
 public class SLAVEOF extends RedisCommand {
     protected var _host:String;

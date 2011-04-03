@@ -2,7 +2,6 @@ package com.codeazur.as3redis.commands.lists {
 import com.codeazur.as3redis.RedisCommand;
 
 import flash.utils.ByteArray;
-import flash.utils.IDataOutput;
 
 public class RPOPLPUSH extends RedisCommand {
     protected var _sourceKey:String;

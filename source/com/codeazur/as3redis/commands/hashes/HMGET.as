@@ -8,7 +8,6 @@ package com.codeazur.as3redis.commands.hashes {
 import com.codeazur.as3redis.commands.base.KeyCommand;
 
 import flash.utils.ByteArray;
-import flash.utils.IDataOutput;
 
 public class HMGET extends KeyCommand {
     private var _fields : Array;

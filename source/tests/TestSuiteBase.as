@@ -21,9 +21,9 @@ public class TestSuiteBase extends EventDispatcher {
     private var _currentValidator : Function;
     private var _currentArgs : Array;
 
-    public function TestSuiteBase(logger : Function) {
+    public function TestSuiteBase(logger : Function, red : Redis = null) {
         _logger = logger;
-        _redis = new Redis();
+        _redis = red || new Redis();
         _tests = [];
     }
 
@@ -41,7 +41,7 @@ public class TestSuiteBase extends EventDispatcher {
     }
 
     private function okResponder(cmd : RedisCommand) : void {
-        if(_currentValidator && !_currentValidator(cmd)) {
+        if(_currentValidator != null && !_currentValidator(cmd)) {
             logger('');
             logger('');
             logger("FAIL: " + cmd.name);
@@ -65,6 +65,7 @@ public class TestSuiteBase extends EventDispatcher {
     }
 
     public function runTests() : void {
+        _currentTestIndex = -1;
         runNextTest();
     }
 

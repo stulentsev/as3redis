@@ -3,11 +3,11 @@ import com.codeazur.as3redis.commands.connection.*;
 import com.codeazur.as3redis.commands.hashes.*;
 import com.codeazur.as3redis.commands.keys.*;
 import com.codeazur.as3redis.commands.lists.*;
+import com.codeazur.as3redis.commands.pubsub.*;
 import com.codeazur.as3redis.commands.server.*;
 import com.codeazur.as3redis.commands.sets.*;
 import com.codeazur.as3redis.commands.sorted_sets.*;
 import com.codeazur.as3redis.commands.strings.*;
-import com.codeazur.as3redis.events.RedisMonitorDataEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -17,7 +17,10 @@ import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 import flash.net.Socket;
 import flash.utils.ByteArray;
+import flash.utils.Dictionary;
 import flash.utils.getTimer;
+
+import org.osmf.metadata.IFacet;
 
 public class Redis extends EventDispatcher {
     protected var socket:Socket;
@@ -33,6 +36,10 @@ public class Redis extends EventDispatcher {
     protected var _port:int;
     protected var _password:String;
     protected var _immediateSend:Boolean = true;
+
+    protected var _subscriptionCount:int = 0;
+    protected var _localSubscriptionCount:int = 0;
+    protected var _subscribers : Object = {};
 
     public function Redis(host:String = "127.0.0.1", port:int = 6379) {
         _host = host;
@@ -143,51 +150,51 @@ public class Redis extends EventDispatcher {
 
     // Commands operating on hashes
 
-    public function sendHGET(key : String, field : String) : RedisCommand {
+    public function sendHGET(key:String, field:String):RedisCommand {
         return addCommand(new HGET(key, field));
     }
 
-    public function sendHSET(key : String, field : String, value : *) : RedisCommand {
+    public function sendHSET(key:String, field:String, value:*):RedisCommand {
         return addCommand(new HSET(key, field, value));
     }
 
-    public function sendHSETNX(key : String, field : String, value : *) : RedisCommand {
+    public function sendHSETNX(key:String, field:String, value:*):RedisCommand {
         return addCommand(new HSETNX(key, field, value));
     }
 
-    public function sendHINCRBY(key : String, field : String, incr : int) : RedisCommand {
+    public function sendHINCRBY(key:String, field:String, incr:int):RedisCommand {
         return addCommand(new HINCRBY(key, field, incr));
     }
 
-    public function sendHDEL(key : String, field : String) : RedisCommand {
+    public function sendHDEL(key:String, field:String):RedisCommand {
         return addCommand(new HDEL(key, field));
     }
 
-    public function sendHKEYS(key : String) : RedisCommand {
+    public function sendHKEYS(key:String):RedisCommand {
         return addCommand(new HKEYS(key));
     }
 
-    public function sendHVALS(key : String) : RedisCommand {
+    public function sendHVALS(key:String):RedisCommand {
         return addCommand(new HVALS(key));
     }
 
-    public function sendHGETALL(key : String) : RedisCommand {
+    public function sendHGETALL(key:String):RedisCommand {
         return addCommand(new HGETALL(key));
     }
 
-    public function sendHLEN(key : String) : RedisCommand {
+    public function sendHLEN(key:String):RedisCommand {
         return addCommand(new HLEN(key));
     }
 
-    public function sendHEXISTS(key : String, field : String) : RedisCommand {
+    public function sendHEXISTS(key:String, field:String):RedisCommand {
         return addCommand(new HEXISTS(key, field));
     }
 
-    public function sendHMGET(key : String, ... fields) : RedisCommand {
+    public function sendHMGET(key:String, ... fields):RedisCommand {
         return addCommand(new HMGET(key, fields));
     }
 
-    public function sendHMSET(key : String, ... fieldsAndValues) : RedisCommand {
+    public function sendHMSET(key:String, ... fieldsAndValues):RedisCommand {
         return addCommand(new HMSET(key, fieldsAndValues));
     }
 
@@ -416,15 +423,49 @@ public class Redis extends EventDispatcher {
         return addCommand(new SHUTDOWN());
     }
 
+    // Commands of pub/sub family
+
+    public function sendPUBLISH(channel:String, message:String):RedisCommand {
+        return addCommand(new PUBLISH(channel, message));
+    }
+
+    public function sendSUBSCRIBE(channels:Array):RedisCommand {
+        var cmd:SUBSCRIBE = new SUBSCRIBE(channels);
+        for each(var chan : String in channels) {
+            _subscribers[chan] = cmd;
+        }
+
+        _localSubscriptionCount += 1;
+
+        return addCommand(cmd);
+    }
+
+    public function sendPSUBSCRIBE(patterns:Array):RedisCommand {
+        var cmd:PSUBSCRIBE = new PSUBSCRIBE(patterns);
+        for each(var pat : String in patterns) {
+            _subscribers[pat] = cmd;
+        }
+
+        _localSubscriptionCount += 1;
+
+        return addCommand(cmd);
+    }
+
+    public function sendUNSUBSCRIBE(channels:Array):RedisCommand {
+        _localSubscriptionCount -= 1;
+        return addCommand(new UNSUBSCRIBE(channels));
+    }
+
+    public function sendPUNSUBSCRIBE(patterns:Array):RedisCommand {
+        _localSubscriptionCount -= 1;
+        return addCommand(new PUNSUBSCRIBE(patterns));
+    }
+
 
     // Remote server control commands
 
     public function sendINFO():RedisCommand {
         return addCommand(new INFO());
-    }
-
-    public function sendMONITOR():RedisCommand {
-        return addCommand(new MONITOR());
     }
 
     public function sendSLAVEOF(host:String = null, port:int = -1):RedisCommand {
@@ -469,7 +510,9 @@ public class Redis extends EventDispatcher {
             if (getTimer() - startTime < 20) {
                 command = idleQueue.shift();
                 command.send(socket);
-                activeQueue.push(command);
+                if(!isPubsubCommand(command)) {
+                    activeQueue.push(command);
+                }
             } else {
                 break;
             }
@@ -479,6 +522,11 @@ public class Redis extends EventDispatcher {
             enterFrameProvider.removeEventListener(Event.ENTER_FRAME, executeIdleCommandsRunner);
             active = false;
         }
+    }
+
+    private function isPubsubCommand(command:RedisCommand):Boolean {
+        return command is SUBSCRIBE || command is PSUBSCRIBE
+                || command is UNSUBSCRIBE || command is PUNSUBSCRIBE;
     }
 
     protected function connectInternal(host:String, port:int, resultHandler:Function = null):void {
@@ -512,6 +560,11 @@ public class Redis extends EventDispatcher {
         // Read all available bytes from the socket and append them to the buffer
         socket.readBytes(buffer, buffer.length, socket.bytesAvailable);
         // Parse buffer from the start
+
+        buffer.position = 0;
+        var dump : String = buffer.readUTFBytes(buffer.length);
+        trace('buffer: ' + dump);
+
         buffer.position = 0;
         var commandProcessed:Boolean = true;
         while (commandProcessed && buffer.length - buffer.position >= 3) {
@@ -519,132 +572,137 @@ public class Redis extends EventDispatcher {
             // Find the next CR/LF pair starting from the current position
             var i:int = findCRLF(buffer, buffer.position);
             if (i > 0) {
+                var responseType:String;
+                var responseMessage:String;
+                var bulkResponses:Array;
+
                 // We found a CR/LF, and there is data available to parse
                 // Find the first active command in the queue
-                var command:RedisCommand = activeQueue.shift();
-                if (command != null) {
-                    var len:int;
-                    // The first byte of a redis response is always the type indicator
-                    var type:String = String.fromCharCode(buffer.readUnsignedByte());
-                    // Followed by the rest, which is interpreted as a string
-                    var head:String = buffer.readUTFBytes(i - buffer.position);
-                    // Followed by the CR/LF we found above
-                    buffer.position += 2; // skip crlf
-                    // So let's see what we're dealing with:
-                    switch (type) {
-                        case "-":
-                            // This is an error message
-                            command.setResponseType(RedisCommand.RESPONSE_TYPE_ERROR);
-                            command.setResponseMessage(head);
-                            command.fault();
-                            break;
-                        case "+":
-                            // This is a single line reply
-                            command.setResponseType(RedisCommand.RESPONSE_TYPE_STRING);
-                            command.setResponseMessage(head);
-                            command.finishResponse();
-                            break;
-                        case ":":
-                            // This is an integer number
-                            command.setResponseType(RedisCommand.RESPONSE_TYPE_INTEGER);
-                            command.setResponseMessage(head);
-                            command.finishResponse();
-                            break;
-                        case "$":
-                            // This is bulk data
-                            // Get the size of the data block
-                            command.removeAllBulkResponses();
-                            len = parseInt(head);
-                            if (len >= 0) {
-                                // Check if the entire data block is loaded already
-                                if (buffer.length - buffer.position - len - 2 >= 0) {
-                                    // Yes it is, so parse and save it
-                                    command.addBulkResponse(parseBulk(len));
-                                    command.setResponseType(RedisCommand.RESPONSE_TYPE_BULK);
-                                    command.finishResponse();
-                                } else {
-                                    // No, we need to wait for more data
-                                    // Set the position back to the beginning of the current response
-                                    buffer.position = beginningPosOfCurrentResponse;
-                                    commandProcessed = false;
-                                }
+
+                var len:int;
+                // The first byte of a redis response is always the type indicator
+                var type:String = String.fromCharCode(buffer.readUnsignedByte());
+                // Followed by the rest, which is interpreted as a string
+                var head:String = buffer.readUTFBytes(i - buffer.position);
+                // Followed by the CR/LF we found above
+                buffer.position += 2; // skip crlf
+                // So let's see what we're dealing with:
+                switch (type) {
+                    case "-":
+                        // This is an error message
+                        responseType = RedisCommand.RESPONSE_TYPE_ERROR;
+                        responseMessage = head;
+                        break;
+                    case "+":
+                        // This is a single line reply
+                        responseType = RedisCommand.RESPONSE_TYPE_STRING;
+                        responseMessage = head;
+                        break;
+                    case ":":
+                        // This is an integer number
+                        responseType = RedisCommand.RESPONSE_TYPE_INTEGER;
+                        responseMessage = head;
+                        break;
+                    case "$":
+                        // This is bulk data
+                        // Get the size of the data block
+                        bulkResponses = null;
+                        len = parseInt(head);
+                        if (len >= 0) {
+                            // Check if the entire data block is loaded already
+                            if (buffer.length - buffer.position - len - 2 >= 0) {
+                                // Yes it is, so parse and save it
+                                responseType = RedisCommand.RESPONSE_TYPE_BULK;
+                                if (!bulkResponses) bulkResponses = [];
+                                bulkResponses.push(parseBulk(len));
                             } else {
-                                // Length can be -1 (no data available, non-existant key etc)
-                                command.setResponseType(RedisCommand.RESPONSE_TYPE_BULK);
-                                command.setResponseMessage(head);
-                                command.finishResponse();
+                                // No, we need to wait for more data
+                                // Set the position back to the beginning of the current response
+                                buffer.position = beginningPosOfCurrentResponse;
+                                commandProcessed = false;
                             }
-                            break;
-                        case "*":
-                            // This is multi bulk data
-                            command.removeAllBulkResponses();
-                            var count:int = parseInt(head);
-                            if (count > 0) {
-                                for (var j:uint = 0; j < count; j++) {
-                                    var nextcrlf:int = findCRLF(buffer, buffer.position);
-                                    if (nextcrlf >= 0) {
-                                        if (nextcrlf - buffer.position > 1) {
-                                            // The first byte of a redis response is always the type indicator
-                                            type = String.fromCharCode(buffer.readUnsignedByte());
-                                            // Followed by the rest, which is interpreted as a string
-                                            head = buffer.readUTFBytes(nextcrlf - buffer.position);
-                                            // Followed the CR/LF we found above
-                                            buffer.position += 2; // skip crlf
-                                            // Response type must be bulk data
-                                            if (type == "$") {
-                                                len = parseInt(head);
-                                                if (len >= 0) {
-                                                    // Check if the entire data block is loaded already
-                                                    if (buffer.length - buffer.position - len - 2 >= 0) {
-                                                        // Yes it is, so parse and save it
-                                                        command.addBulkResponse(parseBulk(len));
-                                                    } else {
-                                                        // No, we need to wait for more data
-                                                        // Set the position back to the beginning of the current response
-                                                        buffer.position = beginningPosOfCurrentResponse;
-                                                        commandProcessed = false;
-                                                        break;
-                                                    }
+                        } else {
+                            // Length can be -1 (no data available, non-existant key etc)
+                            responseType = RedisCommand.RESPONSE_TYPE_BULK;
+                            responseMessage = head;
+                        }
+                        break;
+                    case "*":
+                        // This is multi bulk data
+                        bulkResponses = null;
+                        var count:int = parseInt(head);
+                        if (count > 0) {
+                            for (var j:uint = 0; j < count; j++) {
+                                var nextcrlf:int = findCRLF(buffer, buffer.position);
+                                if (nextcrlf >= 0) {
+                                    if (nextcrlf - buffer.position > 1) {
+                                        // The first byte of a redis response is always the type indicator
+                                        type = String.fromCharCode(buffer.readUnsignedByte());
+                                        // Followed by the rest, which is interpreted as a string
+                                        head = buffer.readUTFBytes(nextcrlf - buffer.position);
+                                        // Followed the CR/LF we found above
+                                        buffer.position += 2; // skip crlf
+                                        // Response type must be bulk data
+                                        if (type == "$") {
+                                            len = parseInt(head);
+                                            if (len >= 0) {
+                                                // Check if the entire data block is loaded already
+                                                if (buffer.length - buffer.position - len - 2 >= 0) {
+                                                    // Yes it is, so parse and save it
+                                                    if (!bulkResponses) bulkResponses = [];
+                                                    bulkResponses.push(parseBulk(len));
                                                 } else {
-                                                    // Length can be -1 (no data available, non-existant key etc)
-                                                    command.addBulkResponse(null);
+                                                    // No, we need to wait for more data
+                                                    // Set the position back to the beginning of the current response
+                                                    buffer.position = beginningPosOfCurrentResponse;
+                                                    commandProcessed = false;
+                                                    break;
                                                 }
                                             } else {
-                                                throw(new Error("Illegal header type '" + type + "'."));
+                                                // Length can be -1 (no data available, non-existant key etc)
+                                                if (!bulkResponses) bulkResponses = [];
+                                                bulkResponses.push(null);
                                             }
+                                        } else if(type == ':') {
+                                            bulkResponses.push(parseInt(head));
                                         } else {
-                                            throw(new Error("Empty header."));
+                                            throw(new Error("Illegal header type '" + type + "'."));
                                         }
                                     } else {
-                                        buffer.position = beginningPosOfCurrentResponse;
-                                        commandProcessed = false;
-                                        break;
+                                        throw(new Error("Empty header."));
                                     }
+                                } else {
+                                    buffer.position = beginningPosOfCurrentResponse;
+                                    commandProcessed = false;
+                                    break;
                                 }
                             }
-                            if (commandProcessed) {
-                                command.setResponseType(RedisCommand.RESPONSE_TYPE_BULK_MULTI);
-                                command.finishResponse();
+                        }
+                        if (commandProcessed) {
+                            responseType = RedisCommand.RESPONSE_TYPE_BULK_MULTI;
+                        }
+                        break;
+                }
+
+                if (commandProcessed) {
+                    var handled : Boolean = handleSubscriptionOutput(bulkResponses)
+
+                    if(!handled) {
+                        var command:RedisCommand = activeQueue.shift();
+                        if (command != null) {
+                            command.setResponseType(responseType);
+                            command.setResponseMessage(responseMessage);
+                            if(bulkResponses) {
+                                for each(var b : * in bulkResponses) {
+                                    command.addBulkResponse(b);
+                                }
                             }
-                            break;
-                        default:
-                            if (command is MONITOR) {
-                                var event:RedisMonitorDataEvent = new RedisMonitorDataEvent(
-                                        RedisMonitorDataEvent.MONITOR_DATA,
-                                        type + head
-                                        );
-                                dispatchEvent(event);
-                            } else {
-                                throw(new Error("Illegal header type '" + type + "'."));
-                            }
-                            break;
+                            command.finishResponse();
+                        } else {
+                            throw(new Error("No active commands found."));
+                        }
                     }
-                    if (!commandProcessed || (command is MONITOR)) {
-                        // add command back to queue
-                        activeQueue.splice(0, 0, command);
-                    }
-                } else {
-                    throw(new Error("No active commands found."));
+
                 }
             } else if (i == 0) {
                 throw(new Error("Empty header."));
@@ -660,6 +718,92 @@ public class Redis extends EventDispatcher {
             buffer.length = 0;
         }
     }
+
+    private function handleSubscriptionOutput(bulkResponses : Array) : Boolean {
+        var sublen : Number = countMembers(_subscribers);
+        if (sublen == 0) {
+            return false;
+        }
+
+        var strings : Array = responseBulkAsStrings(bulkResponses);
+
+        if (strings && (strings.length == 3 || strings.length == 4)) {
+            var msgType : String = strings[0];
+            var channel : String = strings[1];
+
+            if (msgType == 'subscribe') {
+                _subscriptionCount = parseInt(strings[2]);
+                return true;
+            }
+            if (msgType == 'unsubscribe') {
+                _subscriptionCount = parseInt(strings[2]);
+
+                delete _subscribers[channel];
+                return true;
+            }
+
+            if (msgType == 'message') {
+                dispatchMessage(channel, strings[2]);
+                return true;
+            }
+            if (msgType == 'pmessage') {
+                dispatchMessage(channel, strings[3]);
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    private function dispatchMessage(channel:String, message:String):void {
+        var cmd : RedisCommand = _subscribers[channel];
+        if(cmd) {
+            cmd.setResponseType(RedisCommand.RESPONSE_TYPE_STRING);
+            cmd.setResponseMessage(message);
+            cmd.finishResponse();
+        } else {
+            throw new Error("no listener for '" + channel + "'");
+        }
+    }
+
+    private function get isInSubscribedState():Boolean {
+        return _subscriptionCount > 0;
+    }
+
+    private function countMembers(obj : Object) : int {
+        var result : int = 0;
+        for each(var i : * in obj) {
+            result += 1;
+        }
+        return result;
+    }
+
+    private function responseBulkAsStrings(bulks:Array):Array {
+        var result:Array;
+        if (bulks != null && bulks.length > 0) {
+            result = [];
+            var val:String;
+            for (var i:uint = 0; i < bulks.length; i++) {
+                val = null;
+                if(bulks[i] is ByteArray) {
+                    var ba:ByteArray = bulks[i];
+                    if (ba != null) {
+                        if (ba.length > 0) {
+                            ba.position = 0;
+                            val = ba.readUTFBytes(ba.length);
+                        } else {
+                            val = "";
+                        }
+                    }
+                    result.push(val);
+                } else {
+                    result.push(String(bulks[i]));
+                }
+            }
+        }
+        return result;
+    }
+
 
     protected function parseBulk(len:int):ByteArray {
         // Process the bulk data body

@@ -5,6 +5,8 @@
 
 
 package tests {
+import com.codeazur.as3redis.Redis;
+
 import flash.events.Event;
 
 public class AllTests extends TestSuiteBase {
@@ -13,10 +15,10 @@ public class AllTests extends TestSuiteBase {
     private var _completedCount : uint = 0;
     private var _isRunning : Boolean = false;
 
-    public function AllTests(logger : Function) {
-        super(logger);
+    public function AllTests(logger : Function, red : Redis) {
+        super(logger, red);
 
-        _suites.push(new Hashes(logger));
+        _suites.push(new Hashes(logger, red));
     }
 
     override public function runTests() : void {

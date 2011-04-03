@@ -2,11 +2,9 @@
 import com.codeazur.as3redis.RedisCommand;
 
 import flash.utils.ByteArray;
-import flash.utils.IDataOutput;
 
 public class ECHO extends RedisCommand {
     protected var _text:String;
-    protected var _response:String;
 
     public function ECHO(text:String) {
         _text = text;
@@ -22,13 +20,6 @@ public class ECHO extends RedisCommand {
 
     override public function toStringCommand():String {
         return "[" + name + " " + _text + "]";
-    }
-
-    override protected function processBulkResponse(response:ByteArray):void {
-        if (response && response.length > 0) {
-            var p:String = response.readUTFBytes(response.length);
-            _response = p;
-        }
     }
 }
 }

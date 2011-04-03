@@ -2,7 +2,6 @@ package com.codeazur.as3redis.commands.keys {
 import com.codeazur.as3redis.RedisCommand;
 
 import flash.utils.ByteArray;
-import flash.utils.IDataOutput;
 
 public class MOVE extends RedisCommand {
     protected var _key:String;

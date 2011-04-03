@@ -1,9 +1,5 @@
 ﻿package com.codeazur.as3redis.commands.strings {
-import com.codeazur.as3redis.RedisCommand;
-
 import com.codeazur.as3redis.commands.base.KeyValueCommand;
-
-import flash.utils.IDataOutput;
 
 public class DECRBY extends KeyValueCommand {
 
