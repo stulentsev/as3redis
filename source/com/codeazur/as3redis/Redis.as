@@ -17,10 +17,7 @@ import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 import flash.net.Socket;
 import flash.utils.ByteArray;
-import flash.utils.Dictionary;
 import flash.utils.getTimer;
-
-import org.osmf.metadata.IFacet;
 
 public class Redis extends EventDispatcher {
     protected var socket:Socket;
@@ -37,8 +34,6 @@ public class Redis extends EventDispatcher {
     protected var _password:String;
     protected var _immediateSend:Boolean = true;
 
-    protected var _subscriptionCount:int = 0;
-    protected var _localSubscriptionCount:int = 0;
     protected var _subscribers : Object = {};
 
     public function Redis(host:String = "127.0.0.1", port:int = 6379) {
@@ -435,7 +430,6 @@ public class Redis extends EventDispatcher {
             _subscribers[chan] = cmd;
         }
 
-        _localSubscriptionCount += 1;
 
         return addCommand(cmd);
     }
@@ -446,18 +440,14 @@ public class Redis extends EventDispatcher {
             _subscribers[pat] = cmd;
         }
 
-        _localSubscriptionCount += 1;
-
         return addCommand(cmd);
     }
 
     public function sendUNSUBSCRIBE(channels:Array):RedisCommand {
-        _localSubscriptionCount -= 1;
         return addCommand(new UNSUBSCRIBE(channels));
     }
 
     public function sendPUNSUBSCRIBE(patterns:Array):RedisCommand {
-        _localSubscriptionCount -= 1;
         return addCommand(new PUNSUBSCRIBE(patterns));
     }
 
@@ -732,12 +722,9 @@ public class Redis extends EventDispatcher {
             var channel : String = strings[1];
 
             if (msgType == 'subscribe') {
-                _subscriptionCount = parseInt(strings[2]);
                 return true;
             }
             if (msgType == 'unsubscribe') {
-                _subscriptionCount = parseInt(strings[2]);
-
                 delete _subscribers[channel];
                 return true;
             }
@@ -764,10 +751,6 @@ public class Redis extends EventDispatcher {
         } else {
             throw new Error("no listener for '" + channel + "'");
         }
-    }
-
-    private function get isInSubscribedState():Boolean {
-        return _subscriptionCount > 0;
     }
 
     private function countMembers(obj : Object) : int {
