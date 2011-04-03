@@ -5,9 +5,9 @@
 
 
 package com.codeazur.as3redis.commands.hashes {
-import com.codeazur.as3redis.commands.base.KeyFieldCommand;
+import com.codeazur.as3redis.commands.base.KeyValueCommand;
 
-public class HEXISTS extends KeyFieldCommand {
+public class HEXISTS extends KeyValueCommand {
     public function HEXISTS(key : String, field : String) {
         super(key, field);
     }

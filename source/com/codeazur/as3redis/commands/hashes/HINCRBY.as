@@ -5,16 +5,13 @@
 
 
 package com.codeazur.as3redis.commands.hashes {
-import com.codeazur.as3redis.commands.base.KeyFieldCommand;
 
-import flash.utils.ByteArray;
 
-public class HINCRBY extends KeyFieldCommand {
-    private var _increment : int = 0;
+import com.codeazur.as3redis.commands.base.KeyValueValueCommand;
 
+public class HINCRBY extends KeyValueValueCommand {
     public function HINCRBY(key : String, field : String, incr : int) {
-        super(key, field);
-        _increment = incr;
+        super(key, field, incr);
     }
 
     override public function get name():String {
@@ -22,12 +19,7 @@ public class HINCRBY extends KeyFieldCommand {
     }
 
     public function get increment() : * {
-        return _increment;
+        return value2;
     }
-
-    override protected function getUnifiedCommand() : ByteArray {
-        return serializeToUnified(name, _key, _field, _increment);
-    }
-
 }
 }

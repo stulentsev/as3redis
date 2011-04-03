@@ -1,15 +1,15 @@
 keys
-    expireat
-    persist
++    expireat
++    persist
 
 strings:
-    append
-    getbit
-    getrange
-    setbit
-    setex
-    setrange
-    strlen
++    append
++    getbit
++    getrange
++    setbit
++    setex
++    setrange
++    strlen
 
 hashes
     hdel
