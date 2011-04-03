@@ -349,28 +349,73 @@ public class Redis extends EventDispatcher {
         return addCommand(new ZADD(key, score, value));
     }
 
-    public function sendZREM(key:String, value:*):RedisCommand {
-        return addCommand(new ZREM(key, value));
+    public function sendZCARD(key:String):RedisCommand {
+        return addCommand(new ZCARD(key));
+    }
+
+    public function sendZCOUNT(key:String, minScore : String, maxScore : String):RedisCommand {
+        return addCommand(new ZCOUNT(key, minScore, maxScore));
+    }
+
+    public function sendZINCRBY(key:String, increment : Number, member : String):RedisCommand {
+        return addCommand(new ZINCRBY(key, increment, member));
+    }
+
+    public function sendZINTERSTORE(destination : String,
+            numKeys : int,
+            keys : Array,
+            weights : Array = null,
+            aggregate : String = null) : RedisCommand {
+        return addCommand(new ZINTERSTORE(destination, numKeys, keys, weights, aggregate));
     }
 
     public function sendZRANGE(key:String, startIndex:int, endIndex:int):RedisCommand {
         return addCommand(new ZRANGE(key, startIndex, endIndex));
     }
 
+    public function sendZRANGEBYSCORE(key : String, minScore : String, maxScore : String, withScores : Boolean = false, offset : int = NaN, count : int = NaN) : RedisCommand {
+        return addCommand(new ZRANGEBYSCORE(key, minScore, maxScore, withScores, offset, count));
+    }
+
+    public function sendZRANK(key:String, member:String):RedisCommand {
+        return addCommand(new ZRANK(key, member));
+    }
+
+    public function sendZREM(key:String, value:*):RedisCommand {
+        return addCommand(new ZREM(key, value));
+    }
+
+    public function sendZREMRANGEBYRANK(key : String, startIndex : int, endIndex : int) : RedisCommand {
+        return addCommand(new ZREMRANGEBYRANK(key, startIndex, endIndex));
+    }
+
+    public function sendZREMRANGEBYSCORE(key : String, minScore : int, maxScore : int) : RedisCommand {
+        return addCommand(new ZREMRANGEBYSCORE(key, minScore, maxScore));
+    }
+
     public function sendZREVRANGE(key:String, startIndex:int, endIndex:int):RedisCommand {
         return addCommand(new ZREVRANGE(key, startIndex, endIndex));
     }
 
-    public function sendZRANGEBYSCORE(key:String, minScore:Number, maxScore:Number):RedisCommand {
-        return addCommand(new ZRANGEBYSCORE(key, minScore, maxScore));
+    public function sendZREVRANGEBYSCORE(key : String, minScore : String, maxScore : String, withScores : Boolean = false, offset : int = NaN, count : int = NaN) : RedisCommand {
+        return addCommand(new ZREVRANGEBYSCORE(key, minScore, maxScore, withScores, offset, count));
     }
 
-    public function sendZCARD(key:String):RedisCommand {
-        return addCommand(new ZCARD(key));
+    public function sendZREVRANK(key:String, member:String):RedisCommand {
+        return addCommand(new ZREVRANK(key, member));
     }
 
     public function sendZSCORE(key:String, value:*):RedisCommand {
         return addCommand(new ZSCORE(key, value));
+    }
+
+
+    public function sendZUNIONSTORE(destination : String,
+            numKeys : int,
+            keys : Array,
+            weights : Array = null,
+            aggregate : String = null) : RedisCommand {
+        return addCommand(new ZUNIONSTORE(destination, numKeys, keys, weights, aggregate));
     }
 
 
@@ -551,9 +596,9 @@ public class Redis extends EventDispatcher {
         socket.readBytes(buffer, buffer.length, socket.bytesAvailable);
         // Parse buffer from the start
 
-        buffer.position = 0;
-        var dump : String = buffer.readUTFBytes(buffer.length);
-        trace('buffer: ' + dump);
+//        buffer.position = 0;
+//        var dump : String = buffer.readUTFBytes(buffer.length);
+//        trace('buffer: ' + dump);
 
         buffer.position = 0;
         var commandProcessed:Boolean = true;

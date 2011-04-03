@@ -6,7 +6,7 @@ import com.codeazur.as3redis.commands.base.KeyValueValueCommand;
 import flash.utils.ByteArray;
 
 public class ZINCRBY extends KeyValueValueCommand {
-    public function ZINCRBY(key:String, increment:Number, member:Number) {
+    public function ZINCRBY(key:String, increment:Number, member:String) {
         super(key, increment, member);
     }
 

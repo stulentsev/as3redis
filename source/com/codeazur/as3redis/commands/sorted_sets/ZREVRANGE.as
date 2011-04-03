@@ -1,9 +1,8 @@
 package com.codeazur.as3redis.commands.sorted_sets {
-import com.codeazur.as3redis.commands.base.KeyValueValueCommand;
 
-public class ZREVRANGE extends KeyValueValueCommand {
-    public function ZREVRANGE(key:String, startIndex:int, endIndex:int) {
-        super(key, startIndex, endIndex);
+public class ZREVRANGE extends ZRANGE {
+    public function ZREVRANGE(key:String, startIndex:int, endIndex:int, withScores : Boolean = false) {
+        super(key, startIndex, endIndex, withScores);
     }
 
     override public function get name():String {
