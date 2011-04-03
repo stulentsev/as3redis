@@ -1,27 +1,18 @@
 ﻿package com.codeazur.as3redis.commands.keys {
 import com.codeazur.as3redis.RedisCommand;
 
+import com.codeazur.as3redis.commands.base.KeyValueCommand;
+
 import flash.utils.ByteArray;
 
-public class EXPIRE extends RedisCommand {
-    protected var _key:String;
-    protected var _seconds:uint;
+public class EXPIRE extends KeyValueCommand {
 
     public function EXPIRE(key:String, seconds:uint) {
-        _key = key;
-        _seconds = seconds;
+        super(key, seconds);
     }
 
     override public function get name():String {
         return "EXPIRE";
-    }
-
-    override protected function getUnifiedCommand() : ByteArray {
-        return serializeToUnified(name, _key, _seconds);
-    }
-
-    override public function toStringCommand():String {
-        return "[" + name + " " + _key + " " + _seconds + "]";
     }
 }
 }
