@@ -26,12 +26,12 @@ hashes
 +    hvals
 
 lists
-    blpop
-    brpop
-    brpoplpush
-    linsert
-    lpushhx
-    rpushhx
++    blpop
++    brpop
++    brpoplpush
++    linsert
++    lpushhx
++    rpushhx
 
 sorted sets
 +    zcount
