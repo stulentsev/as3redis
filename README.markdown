@@ -39,7 +39,7 @@ This will auto-connect to your Redis instance, authenticate the client with the 
 
 ### Receiving responses
 
-In Flash, pretty much all native networking APIs are asynchronous, and so is as3redis. You can bulk-send commands to Redis, and as3swf always keeps the commands in sync with the received responses.
+In Flash, pretty much all native networking APIs are asynchronous, and so is as3redis. You can bulk-send commands to Redis, and as3redis always keeps the commands in sync with the received responses.
 
 To get notified by as3redis when a response was received for a specific command, add one or more responders to the command. The simplest example:
 
@@ -49,7 +49,7 @@ To get notified by as3redis when a response was received for a specific command,
 			trace(cmd);
 		}
 	);
-	
+
 	// Trace output:
 	// [INFO]
 	//   Role: master
@@ -63,7 +63,7 @@ To get notified by as3redis when a response was received for a specific command,
 	//   ChangesSinceLastSave: 0
 	//   BGSaveInProgress: 0
 	//   TotalConnectionsReceived: 432
-	//   TotalCommandsProcessed: 27770	
+	//   TotalCommandsProcessed: 27770
 
 You can (and should) also catch error responses:
 
@@ -81,17 +81,17 @@ Or use one responder for all commands:
 
 	var redis:Redis = new Redis();
 	var responder:RedisResponder = new RedisResponder(success, fault);
-	
+
 	redis.sendSETNX("key", "value").addResponder(responder);
 	redis.sendGET("key").addResponder(responder);
-	
+
 	function success(cmd:RedisCommand):void {
 		trace(cmd);
 	}
 	function fault(cmd:RedisCommand):void {
 		trace("ERROR!\r" + cmd);
 	}
-	
+
 	// Trace output:
 	// [SETNX key value]
 	//   1
