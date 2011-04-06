@@ -531,16 +531,8 @@ public class Redis extends EventDispatcher {
         return addCommand(new BGSAVE());
     }
 
-    public function sendCONFIGGET(parameter : String):RedisCommand {
-        return addCommand(new CONFIGGET(parameter));
-    }
-
-    public function sendCONFIGRESETSTAT():RedisCommand {
-        return addCommand(new CONFIGRESETSTAT());
-    }
-
-    public function sendCONFIGSET(parameter : String, value : *):RedisCommand {
-        return addCommand(new CONFIGSET(parameter, value));
+    public function sendCONFIG(subcommand : String, ... parameters):RedisCommand {
+        return addCommand(new CONFIG(subcommand, parameters));
     }
 
     public function sendDBSIZE():RedisCommand {
@@ -561,6 +553,10 @@ public class Redis extends EventDispatcher {
 
     public function sendLASTSAVE():RedisCommand {
         return addCommand(new LASTSAVE());
+    }
+
+    public function sendOBJECT(subcommand : String, ... parameters):RedisCommand {
+        return addCommand(new OBJECT(subcommand, parameters));
     }
 
     public function sendSAVE():RedisCommand {

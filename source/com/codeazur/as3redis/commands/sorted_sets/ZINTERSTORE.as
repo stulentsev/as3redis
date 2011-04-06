@@ -40,7 +40,7 @@ public class ZINTERSTORE extends RedisCommand {
         }
 
         if(_weights) {
-            for each(var f : String in _weights) {
+            for each(f in _weights) {
                 args.push(f);
             }
         }

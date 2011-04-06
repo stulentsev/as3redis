@@ -37,7 +37,7 @@ public class ZRANGEBYSCORE extends RedisCommand {
             args.push("WITHSCORES");
         }
 
-        if(_offset != NaN && _count != NaN) {
+        if(!isNaN(_offset) && !isNaN(_count)) {
             args.push('LIMIT');
             args.push(_offset);
             args.push(_count);
